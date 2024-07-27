@@ -111,7 +111,13 @@ const Map = ({ positions }) => {
                   (el) =>
                     el.location.longitude === coordinates[0] &&
                     el.location.latitude === coordinates[1]
-                ).severity
+                ).severity > 3
+                  ? 3
+                  : positions.find(
+                      (el) =>
+                        el.location.longitude === coordinates[0] &&
+                        el.location.latitude === coordinates[1]
+                    ).severity
               ].color,
             'circle-opacity': 0.5,
           },

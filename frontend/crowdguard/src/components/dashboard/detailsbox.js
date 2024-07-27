@@ -59,7 +59,9 @@ const DetailsBox = ({
             <p className='text-muted-foreground'>
               Severity:{' '}
               <span className='font-semibold'>
-                {severityDetails[severity].value}
+                {severity > 3
+                  ? severityDetails[3].value
+                  : severityDetails[severity].value}
               </span>
             </p>
             <a

@@ -152,6 +152,7 @@ const Map = ({ positions }) => {
           accident_type={markerClickedData?.type}
           severity={markerClickedData?.severity}
           photo={markerClickedData?.photo}
+          setDetailsboxOpen={setDetailsboxOpen}
         />
       )}
     </div>

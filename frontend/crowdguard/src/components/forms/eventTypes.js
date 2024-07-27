@@ -32,4 +32,27 @@ const eventTypes = [
   { key: 'OTHER', value: 'Other' },
 ];
 
-export { eventTypes };
+const severityDetails = [
+  {
+    key: 0,
+    value: 'Normal',
+    color: 'gray',
+  },
+  {
+    key: 1,
+    value: 'Normal',
+    color: 'yellow',
+  },
+  {
+    key: 2,
+    value: 'Devastating',
+    color: 'orange',
+  },
+  {
+    key: 3,
+    value: 'Catastrophic',
+    color: 'red',
+  },
+];
+
+export { eventTypes, severityDetails };

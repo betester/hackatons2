@@ -27,6 +27,7 @@ import {
 import { eventTypes } from './eventTypes';
 import { toast } from 'sonner';
 import { Skeleton } from '../ui/skeleton';
+import { useMediaQuery } from 'react-responsive';
 
 const accidentReportSchema = z.object({
   description: z.string(),
@@ -41,6 +42,7 @@ const SubmitReport = ({}) => {
     coordinatesClickedAtom
   );
   const [location, setLocation] = useState([]);
+  const isDesktop = useMediaQuery({ query: '(min-width: 1024px)' });
 
   useEffect(() => {
     setLocation(coordinatesClicked);
@@ -113,110 +115,112 @@ const SubmitReport = ({}) => {
   return (
     <Drawer open={drawerOpen} onOpenChange={(open) => setDrawerOpen(open)}>
       <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Submit a report</DrawerTitle>
-        </DrawerHeader>
-        <div className='p-4'>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className='flex flex-col space-y-4'
-            >
-              <FormField
-                control={form.control}
-                name='description'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder='There was an accident at the corner of Jl. Radio Dalam and Jl. Gandaria'
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Describe the accident in a few words.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+        <div className={isDesktop ? 'w-1/3 m-auto' : ''}>
+          <DrawerHeader>
+            <DrawerTitle>Submit a report</DrawerTitle>
+          </DrawerHeader>
+          <div className='p-4'>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='flex flex-col space-y-4'
+              >
+                <FormField
+                  control={form.control}
+                  name='description'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder='There was an accident at the corner of Jl. Radio Dalam and Jl. Gandaria'
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Describe the accident in a few words.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name='location'
-                render={({}) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <div className='flex space-x-4 items-center overflow-hidden whitespace-nowrap'>
-                        <div className='flex space-x-2 items-center border p-2'>
-                          <a
-                            className='text-black hover:underline text-sm'
-                            onClick={getLocation}
-                          >
-                            Get location
-                          </a>
+                <FormField
+                  control={form.control}
+                  name='location'
+                  render={({}) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <div className='flex space-x-4 items-center overflow-hidden whitespace-nowrap'>
+                          <div className='flex space-x-2 items-center border p-2'>
+                            <a
+                              className='text-black hover:underline text-sm'
+                              onClick={getLocation}
+                            >
+                              Get location
+                            </a>
+                          </div>
+                          {location ? (
+                            <p className='text-sm text-gray-500 text-ellipsis'>
+                              {location}
+                            </p>
+                          ) : (
+                            <Skeleton width={100} height={20} />
+                          )}
                         </div>
-                        {location ? (
-                          <p className='text-sm text-gray-500 text-ellipsis'>
-                            {location}
-                          </p>
-                        ) : (
-                          <Skeleton width={100} height={20} />
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      Press the button to relocate yourself.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormDescription>
+                        Press the button to relocate yourself.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name='location'
-                render={({}) => (
-                  <FormItem>
-                    <FormLabel>Type</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) =>
-                          form.setValue('accidentType', value)
-                        }
-                        defaultValue=''
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select type' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {eventTypes.map((item) => (
-                            <SelectItem key={item.key} value={item.value}>
-                              {item.value}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>
-                      Select the type of accident.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name='location'
+                  render={({}) => (
+                    <FormItem>
+                      <FormLabel>Type</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={(value) =>
+                            form.setValue('accidentType', value)
+                          }
+                          defaultValue=''
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select type' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {eventTypes.map((item) => (
+                              <SelectItem key={item.key} value={item.value}>
+                                {item.value}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>
+                        Select the type of accident.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button type='submit' onClick={form.handleSubmit(onSubmit)}>
-                Submit
-              </Button>
-              <Button variant='outline' onClick={() => setDrawerOpen(false)}>
-                Cancel
-              </Button>
-              <FormMessage />
-            </form>
-          </Form>
+                <Button type='submit' onClick={form.handleSubmit(onSubmit)}>
+                  Submit
+                </Button>
+                <Button variant='outline' onClick={() => setDrawerOpen(false)}>
+                  Cancel
+                </Button>
+                <FormMessage />
+              </form>
+            </Form>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>

@@ -23,8 +23,6 @@ func AddAccidentReport(report data.AccidentReport) {
     report.CreatedTimeStamp = time.Now()
     currentAccidentReportId += 1
     reportDatabase[report.Id] = report;
-
-    // TODO: when adding on this place emit the gabagoo to another function which will decide the severity
 }
 
 func GetAccidentReport() []data.AccidentReport {
@@ -68,6 +66,5 @@ func GetAccidentSummary() []data.AccidentSummary  {
 
         clusterSummary[i] = result
     }
-
     return clusterSummary
 }

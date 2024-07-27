@@ -1,9 +1,7 @@
-import { Button } from '../ui/button';
-
 const { Card, CardTitle, CardDescription } = require('../ui/card');
 
 // This component renders cards that acts as a button to specific advisory page
-const AccidentCard = ({ title, description }) => {
+const AccidentCard = ({ title, description, link }) => {
   return (
     <Card className='w-[400px] h-[200px] p-4 bg-white shadow-md rounded-md flex justify-center items-start flex-col'>
       <CardTitle className='mb-3'>
@@ -12,7 +10,11 @@ const AccidentCard = ({ title, description }) => {
       <CardDescription>
         <div className='flex flex-col space-y-2'>
           <p>{description}</p>
-          <a className='text-blue-500 hover:underline' target='_blank'>
+          <a
+            className='text-blue-500 hover:underline'
+            href={link}
+            target='_blank'
+          >
             Read more
           </a>
         </div>

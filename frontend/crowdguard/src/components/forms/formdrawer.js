@@ -26,6 +26,7 @@ import {
   SelectItem,
 } from '../ui/select';
 import { eventTypes } from './eventtypes';
+import { toast } from 'sonner';
 
 const accidentReportSchema = z.object({
   description: z.string(),
@@ -47,8 +48,36 @@ const SubmitReport = ({}) => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const coords = {
+      latitude: parseFloat(data.location.split(',')[1].trim()),
+      longitude: parseFloat(data.location.split(',')[0].trim()),
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/accident_report/', {
+        method: 'POST',
+        headers: {
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({
+          location: coords,
+          accident_type: data.accidentType,
+          description: data.description,
+          photo: data.photo,
+        }),
+      });
+
+      form.reset();
+
+      setDrawerOpen(false);
+
+      toast.success('Report submitted successfully');
+    } catch (error) {
+      console.error(error);
+      // alert('An error occurred while submitting the report');
+    }
   };
 
   const getLocation = () => {
@@ -101,7 +130,14 @@ const SubmitReport = ({}) => {
                     <FormLabel>Location</FormLabel>
                     <FormControl>
                       <div className='flex space-x-4 items-center'>
-                        <Button onClick={getLocation}>Get location</Button>
+                        <div className='flex space-x-2 items-center border p-2'>
+                          <a
+                            className='text-black hover:underline text-sm'
+                            onClick={getLocation}
+                          >
+                            Get location
+                          </a>
+                        </div>
                         <p className='text-sm text-gray-500'>
                           {form.watch('location')}
                         </p>
@@ -147,22 +183,6 @@ const SubmitReport = ({}) => {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name='photo'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Photo</FormLabel>
-                    <FormControl>
-                      <Input type='file' {...field} accept='image/*' />
-                    </FormControl>
-                    <FormDescription>
-                      Provide a photo of the accident.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
 
               <Button type='submit' onClick={form.handleSubmit(onSubmit)}>
                 Submit

@@ -50,5 +50,12 @@ func main() {
         c.JSON(http.StatusOK, response)
     })
 
+    r.GET(fmt.Sprint("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
+        summary := service.GetAccidentSummary()
+        response := make(map[string][]data.AccidentSummary)
+        response["data"] = summary
+        ctx.JSON(http.StatusOK, response)
+    })
+
     r.Run() // listen and serve on 0.0.0.0:8080 (default)
 }

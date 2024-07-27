@@ -5,23 +5,23 @@ import (
 	"hackatons2/backend/data"
 	"hackatons2/backend/service"
 	"net/http"
-	// "time"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
     r := gin.Default()
-    // summaryDuration := time.NewTicker(10 * time.Second)
+    summaryDuration := time.NewTicker(10 * time.Second)
 
-    // go func() {
-    //     for {
-    //         select {
-    //             case <-summaryDuration.C: 
-    //                 service.CreateAccidentSummary()
-    //         }
-    //     }
-    // }()
+    go func() {
+        for {
+            select {
+            case <-summaryDuration.C: 
+                service.CreateAccidentSummary()
+        }
+        }
+    }()
 
     r.GET("/ping", func(c *gin.Context) {
         c.JSON(200, gin.H{

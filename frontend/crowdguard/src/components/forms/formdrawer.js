@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { useAtom } from 'jotai';
 import { drawerOpenStateAtom } from '@/atoms';
@@ -27,6 +27,8 @@ import {
 } from '../ui/select';
 import { eventTypes } from './eventtypes';
 import { toast } from 'sonner';
+import { LoadingSpinner } from '../ui/spinnerloading';
+import { Skeleton } from '../ui/skeleton';
 
 const accidentReportSchema = z.object({
   description: z.string(),
@@ -37,6 +39,7 @@ const accidentReportSchema = z.object({
 
 const SubmitReport = ({}) => {
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
+  const [location, setLocation] = useState([]);
 
   const form = useForm({
     resolver: zodResolver(accidentReportSchema),
@@ -85,9 +88,14 @@ const SubmitReport = ({}) => {
       navigator.geolocation.getCurrentPosition((position) => {
         const location = `${position.coords.longitude}, ${position.coords.latitude}`;
         form.setValue('location', location);
+        setLocation(location);
       });
     }
   };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   return (
     <Drawer
@@ -138,9 +146,14 @@ const SubmitReport = ({}) => {
                             Get location
                           </a>
                         </div>
-                        <p className='text-sm text-gray-500'>
-                          {form.watch('location')}
-                        </p>
+                        {location ? (
+                          <p className='text-sm text-gray-500'>
+                            {/* {form.watch('location')} */}
+                            {location}
+                          </p>
+                        ) : (
+                          <Skeleton width={100} height={20} />
+                        )}
                       </div>
                     </FormControl>
                     <FormDescription>

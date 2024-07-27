@@ -39,21 +39,6 @@ func GetAccidentReport() []data.AccidentReport {
     return response
 }
 
-func getCoordinateMiddlePoint(locations []data.GeoLocation) data.GeoLocation {
-    middleLocation := data.GeoLocation{
-        Latitude: 0,
-        Longitude:0,
-    }
-
-    // get the total sum for each points
-    for i := range locations {
-        middleLocation.Latitude += locations[i].Latitude
-        middleLocation.Longitude += locations[i].Longitude
-    }
-
-    return middleLocation
-}
-
 func CreateAccidentSummary() []data.AccidentSummary  {
     response := GetAccidentReport()
     filteredResponse := make([]data.AccidentReport, 0)
@@ -87,12 +72,15 @@ func CreateAccidentSummary() []data.AccidentSummary  {
 
     for i := range clusteredLocs {
         descriptions := make([][2]string, len(clusteredLocs[i]))
-        locations := make([]data.GeoLocation, len(clusteredLocs[i]))
+        locations := make([][2]float64, len(clusteredLocs[i]))
         clusterIds := clusteredLocs[i]
 
         for j := range clusterIds {
             descriptions[j][0] =  filteredResponse[clusterIds[j]] .Description
             descriptions[j][1] =  filteredResponse[clusterIds[j]] .AccidentType
+
+            locations[j][0] = filteredResponse[clusterIds[j]].Location.Latitude
+            locations[j][1] = filteredResponse[clusterIds[j]].Location.Longitude
         }
 
         // result, err := gpt.SummarizeAccidentDescription(descriptions)
@@ -105,14 +93,20 @@ func CreateAccidentSummary() []data.AccidentSummary  {
         //     continue;
         // }
         // 
-        // result.CreatedTimeStamp = time.Now()
+
+        latitude, longitude := geo.GetCoordinateMiddlePoint(locations)
 
         result := data.AccidentSummary{
             AccidentType: "TEST",
-            Location : getCoordinateMiddlePoint(locations),
+            Location : data.GeoLocation{
+                Latitude: latitude,
+                Longitude: longitude,
+            },
             Severity: 1,
             CreatedTimeStamp: currentTime,
         }
+
+        result.CreatedTimeStamp = time.Now()
 
         clusterSummary = append(clusterSummary, result)
         summaryDatabase[currentSummaryDatabaseId] = result
@@ -140,7 +134,6 @@ func GetAccidentSummary() []data.AccidentSummary {
 
     for i := range summaryDatabase {
         time := summaryDatabase[i].CreatedTimeStamp.Add(time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
-
         if currentTime.After(time) {
             continue
         }

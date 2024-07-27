@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-var reportDatabase map[int]data.AccidentReport = make(map[int]data.AccidentReport) 
-var summaryDatabase map[int]data.AccidentSummary = make(map[int]data.AccidentSummary) 
 
 var currentAccidentReportId int = 0
 var currentSummaryDatabaseId int = 0
@@ -22,28 +20,28 @@ const (
     MAX_RADIUS float64 = 1000
 )
 
-func AddAccidentReport(report data.AccidentReport) {
+func AddAccidentReport(reportDatabase *map[int]data.AccidentReport, report data.AccidentReport) {
 
     report.Id = currentAccidentReportId
     report.CreatedTimeStamp = time.Now()
-    reportDatabase[report.Id] = report
+    (*reportDatabase)[report.Id] = report
     currentAccidentReportId += 1
 }
 
 
-func GetAccidentReport() []data.AccidentReport {
+func GetAccidentReport(reportDatabase *map[int]data.AccidentReport) []data.AccidentReport {
 
-    response := make([]data.AccidentReport, len(reportDatabase))
+    response := make([]data.AccidentReport, 0)
 
-    for _, value := range reportDatabase {
+    for _, value := range *reportDatabase {
         response = append(response, value)
     }
 
     return response
 }
 
-func CreateAccidentSummary(ctx *context.Context) []data.AccidentSummary  {
-    response := GetAccidentReport()
+func CreateAccidentSummary(reportDatabase *map[int]data.AccidentReport, summaryDatabase *map[int]data.AccidentSummary, ctx *context.Context) []data.AccidentSummary  {
+    response := GetAccidentReport(reportDatabase)
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
 
@@ -106,7 +104,7 @@ func CreateAccidentSummary(ctx *context.Context) []data.AccidentSummary  {
         result.CreatedTimeStamp = currentTime
 
         clusterSummary = append(clusterSummary, result)
-        summaryDatabase[currentSummaryDatabaseId] = result
+        (*summaryDatabase)[currentSummaryDatabaseId] = result
         currentSummaryDatabaseId += 1
     }
 
@@ -124,18 +122,18 @@ func getSeverityTime(severity int) int {
     return 30
 }
 
-func GetAccidentSummary() []data.AccidentSummary {
+func GetAccidentSummary(summaryDatabase *map[int]data.AccidentSummary) []data.AccidentSummary {
 
     results := make([]data.AccidentSummary, 0)
     currentTime := time.Now()
 
-    for i := range summaryDatabase {
-        time := summaryDatabase[i].CreatedTimeStamp.Add(time.Minute * time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
+    for i := range *summaryDatabase {
+        time := (*summaryDatabase)[i].CreatedTimeStamp.Add(time.Minute * time.Duration(getSeverityTime((*summaryDatabase)[i].Severity)))
         if currentTime.After(time) {
             continue
         }
 
-        results = append(results, summaryDatabase[i])
+        results = append(results, (*summaryDatabase)[i])
     }  
 
     return results

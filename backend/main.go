@@ -24,12 +24,15 @@ func main() {
     r := gin.Default()
     summaryDuration := time.NewTicker(10 * time.Second)
     ctx := context.Background()
+    
+    reportDatabase := make(map[int]data.AccidentReport) 
+    summaryDatabase := make(map[int]data.AccidentSummary) 
 
     go func() {
         for {
             select {
             case <-summaryDuration.C: 
-                service.CreateAccidentSummary(&ctx)
+                service.CreateAccidentSummary(&reportDatabase, &summaryDatabase, &ctx)
         }
         }
     }()
@@ -50,21 +53,21 @@ func main() {
             return
         }
 
-        service.AddAccidentReport(report)
+        service.AddAccidentReport(&reportDatabase, report)
         c.JSON(200, gin.H{
             "message" : "Accident Reported",
         })
     })
 
     r.GET(fmt.Sprintf("%s/", service.REPORT_BASE_PATH), func(c *gin.Context) {
-        reports := service.GetAccidentReport()
+        reports := service.GetAccidentReport(&reportDatabase)
         response := make(map[string][]data.AccidentReport)
         response["data"] = reports
         c.JSON(http.StatusOK, response)
     })
 
     r.GET(fmt.Sprintf("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
-        summary := service.GetAccidentSummary()
+        summary := service.GetAccidentSummary(&summaryDatabase)
         response := make(map[string][]data.AccidentSummary)
         response["data"] = summary
         ctx.JSON(http.StatusOK, response)

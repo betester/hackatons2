@@ -21,6 +21,9 @@ func TestCreateAccidentSummary(t *testing.T) {
         fmt.Println(errEnv)
     }
 
+    reportDatabase := make(map[int]data.AccidentReport)
+    summaryDatabase := make(map[int]data.AccidentSummary)
+
     mockData := []data.AccidentReport{
         {
             Id:           1,
@@ -57,11 +60,11 @@ func TestCreateAccidentSummary(t *testing.T) {
     }
 
     for i := range mockData {
-        service.AddAccidentReport(mockData[i])
+        service.AddAccidentReport(&reportDatabase, mockData[i])
     }
 
-    result := service.CreateAccidentSummary(&ctx)
-    savedResult := service.GetAccidentSummary()
+    result := service.CreateAccidentSummary(&reportDatabase, &summaryDatabase, &ctx)
+    savedResult := service.GetAccidentSummary(&summaryDatabase)
 
     if len(savedResult) != len(result) {
         fmt.Println("Saved result not the same from returned")

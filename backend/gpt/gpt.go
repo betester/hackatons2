@@ -29,7 +29,7 @@ func SummarizeAccidentDescription(ctx *context.Context, descriptions [][2]string
     prompt := fmt.Sprintf(`
         BASED ON THE FOLLOWING INPUT
 
-        Input: Each element contains description and type of an accident. Start reading the input from 'Input:' and return based on the format given. If you feel like the description and type of accident does not match then set the severity into -1. The description field is a one liner summary that you make of the accident given, it should be simple and informative so that user can see what is happening. You should only return the following types: %s
+        Input: Each element contains description and type of an accident. Start reading the input from 'Input:' and return based on the format given. If you feel like the description and type does not provide sufficient data to the point where you can't even formulate any sentence to give out any advice then set severity to -1. The description field is a one liner summary that you make of the accident given, it should be simple and informative so that user can see what is happening. You should only return the following types: %s
 
         INPUT IS
 

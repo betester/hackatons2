@@ -102,10 +102,29 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     return clusterSummary
 }
 
-// TODO: user aware location brother
+func getSeverityTime(severity int) int {
+    if severity > 3 {
+        return 90
+    } else if severity == 2 {
+        return 60
+    } 
+
+    return 30
+}
+
 func GetAccidentSummary() []data.AccidentSummary {
 
     results := make([]data.AccidentSummary, 0)
+    currentTime := time.Now()
+
+    for i := range summaryDatabase {
+        time := summaryDatabase[i].CreatedTimeStamp.Add(time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
+        if currentTime.After(time) {
+            continue
+        }
+
+        results = append(results, summaryDatabase[i])
+    }  
 
     return results
 }

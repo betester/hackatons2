@@ -35,6 +35,7 @@ type AccidentReportServiceImpl struct {
 }
 
 func (ars *AccidentReportServiceImpl) AddAccidentReport(report data.AccidentReport) error {
+    report.CreatedTimeStamp = time.Now()
     return ars.AccidentReportRepository.AddAccidentReport(report)
 }
 
@@ -44,9 +45,14 @@ func (ars *AccidentReportServiceImpl) GetAccidentReport() []data.AccidentReport 
 
 func (ars *AccidentReportServiceImpl) CreateAccidentSummary() []data.AccidentSummary  {
 
-    response := ars.GetAccidentReport()
+    response := ars.AccidentReportRepository.GetAllAccidentReport()
+
+    fmt.Println(response)
+
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
+
+
 
     var tempBiggestTimeScan time.Time 
 

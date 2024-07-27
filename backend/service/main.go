@@ -12,6 +12,8 @@ var reportDatabase map[int]data.AccidentReport = make(map[int]data.AccidentRepor
 var summaryDatabase map[int]data.AccidentSummary = make(map[int]data.AccidentSummary) 
 
 var currentAccidentReportId int = 0
+var currentSummaryDatabaseId int = 0
+var biggestTimeScan time.Time
 
 const (
     REPORT_BASE_PATH string = "accident_report" 
@@ -40,13 +42,30 @@ func GetAccidentReport() []data.AccidentReport {
     return response
 }
 
-func GetAccidentSummary() []data.AccidentSummary  {
+func CreateAccidentSummary() []data.AccidentSummary  {
     response := GetAccidentReport()
-    locations := make([][2]float64, len(response))
+    filteredResponse := make([]data.AccidentReport, 0)
 
+    var tempBiggestTimeScan time.Time 
+
+    // filter out response that the cluster already created 
     for i := range response {
-        locations[i][0] = response[i].Location.Latitude
-        locations[i][1] = response[i].Location.Longitude
+        if response[i].CreatedTimeStamp.Before(biggestTimeScan) {
+            continue
+        }
+
+        if (response[i].CreatedTimeStamp.After(biggestTimeScan)) {
+            tempBiggestTimeScan = response[i].CreatedTimeStamp
+        }
+
+        filteredResponse = append(filteredResponse, response[i])
+    }
+
+    locations := make([][2]float64, len(filteredResponse))
+
+    for i := range filteredResponse {
+        locations[i][0] = filteredResponse[i].Location.Latitude
+        locations[i][1] = filteredResponse[i].Location.Longitude
     }
     
     clusteredLocs := geo.Dbscan(locations, MAX_RADIUS)
@@ -57,7 +76,7 @@ func GetAccidentSummary() []data.AccidentSummary  {
         clusterIds := clusteredLocs[i]
 
         for j := range clusterIds {
-            descriptions[j] =  response[clusterIds[j]] .Description
+            descriptions[j] =  filteredResponse[clusterIds[j]] .Description
         }
 
         result, err := gpt.SummarizeAccidentDescription(descriptions)
@@ -72,6 +91,8 @@ func GetAccidentSummary() []data.AccidentSummary  {
 
         clusterSummary = append(clusterSummary, result)
     }
+
+    biggestTimeScan = tempBiggestTimeScan
 
     return clusterSummary
 }

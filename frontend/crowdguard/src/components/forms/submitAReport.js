@@ -50,6 +50,7 @@ const SubmitReport = ({}) => {
   });
 
   const onSubmit = async (data) => {
+    console.log(data);
     if (!data.description || !data.location || !data.accidentType) {
       toast.error('Please fill all fields');
       return;
@@ -61,7 +62,7 @@ const SubmitReport = ({}) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/accident_report/', {
+      const response = await fetch('http://localhost:8080/accident_report', {
         method: 'POST',
         headers: {
           'Access-Control-Allow-Headers': '*',
@@ -114,11 +115,14 @@ const SubmitReport = ({}) => {
               <FormField
                 control={form.control}
                 name='description'
-                render={({}) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder='There was an accident at the corner of Jl. Radio Dalam and Jl. Gandaria' />
+                      <Input
+                        {...field}
+                        placeholder='There was an accident at the corner of Jl. Radio Dalam and Jl. Gandaria'
+                      />
                     </FormControl>
                     <FormDescription>
                       Describe the accident in a few words.

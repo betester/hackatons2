@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"hackatons2/backend/data"
+	"hackatons2/backend/repository"
 	"hackatons2/backend/service"
 	"net/http"
 	"os"
@@ -35,15 +36,27 @@ func main() {
     if err != nil {
         panic(err)
     }
-    
-    reportDatabase := make(map[int]data.AccidentReport) 
-    summaryDatabase := make(map[int]data.AccidentSummary) 
+
+    reportDatabase := make([]data.AccidentReport, 0)
+    summaryDatabase := make([]data.AccidentSummary, 0)
+
+    reportRepository := repository.InMemoryAccidentReportRepository{Data : reportDatabase}
+    summaryRepository := repository.InMemoryAccidentSummaryRepository{Data : summaryDatabase}
+
+    accidentReportService := service.AccidentReportServiceImpl{
+        AccidentReportRepository: &reportRepository,
+        AccidentSummaryRepository: &summaryRepository,
+        Client : client,
+        Context: ctx,
+    }
+
+
 
     go func() {
         for {
             select {
             case <-summaryDuration.C: 
-                service.CreateAccidentSummary(client, &reportDatabase, &summaryDatabase, &ctx)
+                accidentReportService.CreateAccidentSummary()
             }
         }
     }()
@@ -64,21 +77,21 @@ func main() {
             return
         }
 
-        service.AddAccidentReport(&reportDatabase, report)
+        accidentReportService.AddAccidentReport(report)
         c.JSON(200, gin.H{
             "message" : "Accident Reported",
         })
     })
 
     r.GET(fmt.Sprintf("%s/", service.REPORT_BASE_PATH), func(c *gin.Context) {
-        reports := service.GetAccidentReport(&reportDatabase)
+        reports := accidentReportService.GetAccidentReport()
         response := make(map[string][]data.AccidentReport)
         response["data"] = reports
         c.JSON(http.StatusOK, response)
     })
 
     r.GET(fmt.Sprintf("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
-        summary := service.GetAccidentSummary(&summaryDatabase)
+        summary := accidentReportService.GetAccidentSummary()
         response := make(map[string][]data.AccidentSummary)
         response["data"] = summary
         ctx.JSON(http.StatusOK, response)

@@ -9,6 +9,8 @@ import (
 )
 
 var reportDatabase map[int]data.AccidentReport = make(map[int]data.AccidentReport) 
+var summaryDatabase map[int]data.AccidentSummary = make(map[int]data.AccidentSummary) 
+
 var currentAccidentReportId int = 0
 
 const (
@@ -48,7 +50,7 @@ func GetAccidentSummary() []data.AccidentSummary  {
     }
     
     clusteredLocs := geo.Dbscan(locations, MAX_RADIUS)
-    clusterSummary := make([]data.AccidentSummary, len(clusteredLocs))
+    clusterSummary := make([]data.AccidentSummary, 0)
 
     for i := range clusteredLocs {
         descriptions := make([]string, len(clusteredLocs[i]))
@@ -64,7 +66,12 @@ func GetAccidentSummary() []data.AccidentSummary  {
             fmt.Println(err)
         }
 
-        clusterSummary[i] = result
+        if (result.Severity == -1)  {
+            continue;
+        }
+
+        clusterSummary = append(clusterSummary, result)
     }
+
     return clusterSummary
 }

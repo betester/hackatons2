@@ -20,5 +20,5 @@ type AccidentSummary struct {
     Id int `json:"id"`
     AccidentType string `json:"type"`
     Location GeoLocation `json:"location"`
-    Severity string `json:"severity"`
+    Severity int `json:"severity"`
 }

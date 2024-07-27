@@ -1,18 +1,21 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"hackatons2/backend/data"
-	"hackatons2/backend/service"
-	"net/http"
-	"os"
-	"time"
+    "context"
+    "fmt"
+    "hackatons2/backend/data"
+    "hackatons2/backend/repository"
+    "hackatons2/backend/service"
+    "net/http"
+    "os"
+    "time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
-	"google.golang.org/api/option"
+    "github.com/gin-gonic/gin"
+    "github.com/go-pg/pg/v10"
+    "github.com/go-pg/pg/v10/orm"
+    "github.com/google/generative-ai-go/genai"
+    "github.com/joho/godotenv"
+    "google.golang.org/api/option"
 )
 
 func init() {
@@ -32,12 +35,41 @@ func main() {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
 
-	if err != nil {
-		panic(err)
-	}
+    if err != nil {
+        panic(err)
+    }
+    
+    url := os.Getenv("URL")
+    parsedUrl, err := pg.ParseURL(url)
 
-	reportDatabase := make(map[int]data.AccidentReport)
-	summaryDatabase := make(map[int]data.AccidentSummary)
+    if err != nil {
+        panic(err)
+    }
+
+    db := pg.Connect(parsedUrl)
+
+    defer db.Close()
+
+    createSchema(db)
+
+    reportRepository := repository.PostgresAccidentReportRepository{DB: db}
+    summaryRepository := repository.PostgresAccidentSummaryRepository{DB : db}
+
+    accidentReportService := service.AccidentReportServiceImpl{
+        AccidentReportRepository: &reportRepository,
+        AccidentSummaryRepository: &summaryRepository,
+        Client : client,
+        Context: ctx,
+    }
+
+    go func() {
+        for {
+            select {
+            case <-summaryDuration.C: 
+                accidentReportService.CreateAccidentSummary()
+            }
+        }
+    }()
 
 	go func() {
 		for {
@@ -56,26 +88,25 @@ func main() {
 		})
 	})
 
-	r.POST(fmt.Sprintf("%s/", service.REPORT_BASE_PATH), func(c *gin.Context) {
-		var report data.AccidentReport
-		if err := c.ShouldBindJSON(&report); err != nil {
-			// If there's an error in binding, respond with a 400 status code
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+        accidentReportService.AddAccidentReport(report)
+        c.JSON(200, gin.H{
+            "message" : "Accident Reported",
+        })
+    })
 
-		service.AddAccidentReport(&reportDatabase, report)
-		c.JSON(200, gin.H{
-			"message": "Accident Reported",
-		})
-	})
+    r.GET(fmt.Sprintf("%s/", service.REPORT_BASE_PATH), func(c *gin.Context) {
+        reports := accidentReportService.GetAccidentReport()
+        response := make(map[string][]data.AccidentReport)
+        response["data"] = reports
+        c.JSON(http.StatusOK, response)
+    })
 
-	r.GET(fmt.Sprintf("%s/", service.REPORT_BASE_PATH), func(c *gin.Context) {
-		reports := service.GetAccidentReport(&reportDatabase)
-		response := make(map[string][]data.AccidentReport)
-		response["data"] = reports
-		c.JSON(http.StatusOK, response)
-	})
+    r.GET(fmt.Sprintf("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
+        summary := accidentReportService.GetAccidentSummary()
+        response := make(map[string][]data.AccidentSummary)
+        response["data"] = summary
+        ctx.JSON(http.StatusOK, response)
+    })
 
 	r.GET(fmt.Sprintf("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
 		summary := service.GetAccidentSummary(&summaryDatabase)
@@ -101,4 +132,20 @@ func CORSMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func createSchema(db *pg.DB) error {
+    models := []interface{}{
+        (*data.AccidentSummary)(nil),
+        (*data.AccidentReport)(nil),
+    }
+    for _, model := range models {
+        err := db.Model(model).CreateTable(&orm.CreateTableOptions{
+            Temp: true,
+        })
+        if err != nil {
+            return err
+        }
+    }
+    return nil
 }

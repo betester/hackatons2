@@ -5,7 +5,11 @@ import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 import { DetailsBox } from './detailsbox';
 import { useAtom } from 'jotai';
-import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
+import {
+  coordinatesClickedAtom,
+  drawerOpenStateAtom,
+  mobileSheetOpenStateAtom,
+} from '@/atoms';
 
 const Map = ({ positions }) => {
   const [markerClickedData, setMarkerClickedData] = useState(null);
@@ -13,6 +17,9 @@ const Map = ({ positions }) => {
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
   const [mobileSheetOpen, setMobileSheetOpen] = useAtom(
     mobileSheetOpenStateAtom
+  );
+  const [coordinatesClicked, setCoordinatesClicked] = useAtom(
+    coordinatesClickedAtom
   );
   const mapContainerRef = useRef();
   const mapRef = useRef();
@@ -62,6 +69,11 @@ const Map = ({ positions }) => {
       locateUser(mapRef.current);
     });
 
+    // set clicked coordinates to atom
+    mapRef.current.on('click', (e) => {
+      setCoordinatesClicked(`${e.lngLat.lng},${e.lngLat.lat}`);
+    });
+
     return () => {
       mapRef.current.remove();
     };
@@ -99,7 +111,10 @@ const Map = ({ positions }) => {
           paint: {
             'circle-radius': 15,
             'circle-color':
-              severityColor[Math.floor(Math.random() * (3 - 1 + 1)) + 1],
+              severityColor[
+                positions.find((el) => el.location.longitude === coordinates[0])
+                  ?.severity
+              ],
             'circle-opacity': 0.5,
           },
         });
@@ -108,7 +123,7 @@ const Map = ({ positions }) => {
       }
     };
 
-    positions.forEach((el) => {
+    positions?.forEach((el) => {
       const marker = new mapboxgl.Marker()
         ?.setLngLat([el.location.longitude, el.location.latitude])
         ?.addTo(mapRef.current);
@@ -133,7 +148,9 @@ const Map = ({ positions }) => {
         <DetailsBox
           description={markerClickedData?.description}
           location
-          accident_type={markerClickedData?.accident_type}
+          accident_advice={markerClickedData?.accident_advice}
+          accident_type={markerClickedData?.type}
+          severity={markerClickedData?.severity}
           photo={markerClickedData?.photo}
         />
       )}

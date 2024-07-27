@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '../ui/drawer';
 import { useAtom } from 'jotai';
-import { drawerOpenStateAtom } from '@/atoms';
+import { coordinatesClickedAtom, drawerOpenStateAtom } from '@/atoms';
 import {
   Form,
   FormField,
@@ -37,7 +37,14 @@ const accidentReportSchema = z.object({
 
 const SubmitReport = ({}) => {
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
+  const [coordinatesClicked, setCoordinatesClicked] = useAtom(
+    coordinatesClickedAtom
+  );
   const [location, setLocation] = useState([]);
+
+  useEffect(() => {
+    setLocation(coordinatesClicked);
+  }, [coordinatesClicked]);
 
   const form = useForm({
     resolver: zodResolver(accidentReportSchema),
@@ -50,29 +57,33 @@ const SubmitReport = ({}) => {
   });
 
   const onSubmit = async (data) => {
-    if (!data.description || !data.location || !data.accidentType) {
+    console.log(data);
+    if (!data.description || !location || !data.accidentType) {
       toast.error('Please fill all fields');
       return;
     }
 
     const coords = {
-      latitude: parseFloat(data.location.split(',')[1].trim()),
-      longitude: parseFloat(data.location.split(',')[0].trim()),
+      latitude: parseFloat(location.split(',')[1].trim()),
+      longitude: parseFloat(location.split(',')[0].trim()),
     };
 
     try {
-      const response = await fetch('http://localhost:8080/accident_report', {
-        method: 'POST',
-        headers: {
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          location: coords,
-          accident_type: data.accidentType,
-          description: data.description,
-        }),
-      });
+      const response = await fetch(
+        'https://test-7jsry5mvrq-as.a.run.app/accident_report',
+        {
+          method: 'POST',
+          headers: {
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({
+            location: coords,
+            accident_type: data.accidentType,
+            description: data.description,
+          }),
+        }
+      );
 
       form.reset();
 

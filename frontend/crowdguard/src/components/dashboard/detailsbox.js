@@ -1,7 +1,13 @@
 import { useMediaQuery } from 'react-responsive';
 import { Card, CardDescription, CardTitle } from '../ui/card';
+import { eventTypes } from '../forms/eventTypes';
 
-const DetailsBox = ({ description, location, accident_type }) => {
+const DetailsBox = ({
+  description,
+  location,
+  accident_type,
+  accident_advice,
+}) => {
   const getGmapsLink = (location) => {
     const { latitude, longitude } = location;
     return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
@@ -33,7 +39,9 @@ const DetailsBox = ({ description, location, accident_type }) => {
       style={isMobile ? mobileAbsolutePosition : desktopAbsolutePosition}
     >
       <Card className='p-4'>
-        <CardTitle className='text-lg font-bold'>{accident_type}</CardTitle>
+        <CardTitle className='text-lg font-bold'>
+          {eventTypes.find((el) => el.key === accident_type).value}
+        </CardTitle>
         <CardDescription className='text-sm'>
           <div className='flex flex-col'>
             <p>{description}</p>
@@ -42,12 +50,11 @@ const DetailsBox = ({ description, location, accident_type }) => {
               href={getGmapsLink(location)}
               target='_blank'
             >
-              View on Google Maps
+              View location on Google Maps
             </a>
 
             <p className='text-sm text-muted-foreground'>
-              {/* Use dynamic from DB TODO: */}
-              What to do? Call 911 or the emergency number in your country.{' '}
+              What to do? {accident_advice}
               <br />
             </p>
           </div>

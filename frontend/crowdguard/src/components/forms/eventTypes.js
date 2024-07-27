@@ -29,6 +29,7 @@ const eventTypes = [
   { key: 'TERRORIST_ATTACK', value: 'Terrorist Attack' },
   { key: 'RIOTS', value: 'Riots' },
   { key: 'MASS_SHOOTING', value: 'Mass Shooting' },
+  { key: 'OTHER', value: 'Other' },
 ];
 
 export { eventTypes };

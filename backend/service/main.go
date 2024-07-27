@@ -23,8 +23,8 @@ func AddAccidentReport(report data.AccidentReport) {
 
     report.Id = currentAccidentReportId
     report.CreatedTimeStamp = time.Now()
+    reportDatabase[report.Id] = report
     currentAccidentReportId += 1
-    reportDatabase[report.Id] = report;
 }
 
 

@@ -121,5 +121,19 @@ func getSeverityTime(severity int) int {
 }
 
 func (ars *AccidentReportServiceImpl) GetAccidentSummary() []data.AccidentSummary {
-    return ars.AccidentSummaryRepository.GetAllAccidentSummary()
+
+    allData := ars.AccidentSummaryRepository.GetAllAccidentSummary()
+    results := make([]data.AccidentSummary, 0)
+    currentTime := time.Now()
+
+    for i := range allData {
+        time := (allData)[i].CreatedTimeStamp.Add(time.Minute * time.Duration(getSeverityTime((allData)[i].Severity)))
+        if currentTime.After(time) {
+            continue
+        }
+
+        results = append(results, (allData)[i])
+    }  
+
+    return results
 }

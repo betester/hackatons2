@@ -18,7 +18,7 @@ func main() {
         for {
             select {
                 case <-summaryDuration.C: 
-                    service.GetAccidentSummary()
+                    service.CreateAccidentSummary()
             }
         }
     }()

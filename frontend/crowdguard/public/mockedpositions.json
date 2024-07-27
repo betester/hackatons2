@@ -1,0 +1,40 @@
+[
+  {
+    "description": "Minor collision between two cars",
+    "location": {
+      "longitude": 106.78380188920285,
+      "latitude": -6.294844667531178
+    },
+    "accident_type": "Collision",
+    "photo": null
+  },
+  {
+    "description": "Motorbike accident on a busy street",
+
+    "location": {
+      "longitude": 106.78541121523564,
+      "latitude": -6.293351688215008
+    },
+    "accident_type": "Motorbike",
+    "photo": null
+  },
+  {
+    "description": "Pedestrian hit by a car",
+
+    "location": {
+      "longitude": 106.78541121533497,
+      "latitude": -6.294738028299098
+    },
+    "accident_type": "Pedestrian",
+    "photo": null
+  },
+  {
+    "description": "Car accident on a busy street",
+    "location": {
+      "longitude": 106.78487477325781,
+      "latitude": -6.294311461348428
+    },
+    "accident_type": "Car",
+    "photo": null
+  }
+]

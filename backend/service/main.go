@@ -1,7 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"hackatons2/backend/data"
+	"hackatons2/backend/geo"
+	"hackatons2/backend/gpt"
 	"time"
 )
 
@@ -34,6 +37,37 @@ func GetAccidentReport() []data.AccidentReport {
         locations[i][1] = response[i].Location.Longitude
     }
     
-    // clusteredLocs := geo.Dbscan(locations, MAX_RADIUS)
     return response
+}
+
+func GetAccidentSummary() []data.AccidentSummary  {
+    response := GetAccidentReport()
+    locations := make([][2]float64, len(response))
+
+    for i := range response {
+        locations[i][0] = response[i].Location.Latitude
+        locations[i][1] = response[i].Location.Longitude
+    }
+    
+    clusteredLocs := geo.Dbscan(locations, MAX_RADIUS)
+    clusterSummary := make([]data.AccidentSummary, len(clusteredLocs))
+
+    for i := range clusteredLocs {
+        descriptions := make([]string, len(clusteredLocs[i]))
+        clusterIds := clusteredLocs[i]
+
+        for j := range clusterIds {
+            descriptions[j] =  response[clusterIds[j]] .Description
+        }
+
+        result, err := gpt.SummarizeAccidentDescription(descriptions)
+
+        if err != nil {
+            fmt.Println(err)
+        }
+
+        clusterSummary[i] = result
+    }
+
+    return clusterSummary
 }

@@ -50,7 +50,11 @@ func main() {
 
 	defer db.Close()
 
-	createSchema(db)
+	err = createSchema(db)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	reportRepository := repository.PostgresAccidentReportRepository{DB: db}
 	summaryRepository := repository.PostgresAccidentSummaryRepository{DB: db}
@@ -133,7 +137,7 @@ func createSchema(db *pg.DB) error {
 	}
 	for _, model := range models {
 		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
-			Temp: true,
+			IfNotExists: true,
 		})
 		if err != nil {
 			return err

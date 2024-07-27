@@ -17,19 +17,11 @@ export default function Home() {
   }, []);
 
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-12 h-screen'>
-      <div className='flex flex-col items-center justify-center mb-5 '>
-        <h1 className='text-4xl font-bold text-center'>
-          Welcome to CrowdGuard
-        </h1>
-        <p className='text-xl text-center'>
-          A platform for crowd-sourced safety information
-        </p>
-        <div className='w-[90vw] pb-12'>
-          <Map positions={accidentData} />
-        </div>
-        <SubmitReport />
+    <main className='flex h-[50vh] flex-col items-center justify-between p-8'>
+      <div className='w-full h-full'>
+        <Map positions={accidentData} />
       </div>
+      <SubmitReport />
     </main>
   );
 }

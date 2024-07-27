@@ -25,7 +25,7 @@ const Map = ({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: [106.865, -6.2088],
-      zoom: 5,
+      zoom: 8,
     });
 
     const locateUser = (map) => {
@@ -78,8 +78,9 @@ const Map = ({
 
   return (
     <div className='mb-12'>
-      <div id='map' ref={mapContainerRef} style={{ height: '80vh' }}></div>
-
+      <div id='map' ref={mapContainerRef} 
+      className='w-full h-[88vh] rounded-lg shadow-md'
+      ></div>
       {markerClickedData && !drawerOpen && (
         <DetailsBox
           description={markerClickedData?.description}

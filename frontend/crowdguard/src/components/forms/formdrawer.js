@@ -27,7 +27,6 @@ import {
 } from '../ui/select';
 import { eventTypes } from './eventtypes';
 
-
 const accidentReportSchema = z.object({
   description: z.string(),
   location: z.string(),
@@ -50,6 +49,15 @@ const SubmitReport = ({}) => {
 
   const onSubmit = (data) => {
     console.log(data);
+  };
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const location = `${position.coords.longitude}, ${position.coords.latitude}`;
+        form.setValue('location', location);
+      });
+    }
   };
 
   return (
@@ -92,10 +100,15 @@ const SubmitReport = ({}) => {
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <Input placeholder='106.8375, -6.2105' {...field} />
+                      <div className='flex space-x-4 items-center'>
+                        <Button onClick={getLocation}>Get location</Button>
+                        <p className='text-sm text-gray-500'>
+                          {form.watch('location')}
+                        </p>
+                      </div>
                     </FormControl>
                     <FormDescription>
-                      Provide the location of the accident.
+                      Press the button to relocate yourself.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +147,7 @@ const SubmitReport = ({}) => {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name='photo'
                 render={({ field }) => (
@@ -149,7 +162,7 @@ const SubmitReport = ({}) => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <Button type='submit' onClick={form.handleSubmit(onSubmit)}>
                 Submit

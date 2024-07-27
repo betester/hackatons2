@@ -34,7 +34,7 @@ type PostgresAccidentSummaryRepository struct {
 }
 
 func (par *PostgresAccidentReportRepository) AddAccidentReport(report data.AccidentReport) error {
-    _, err := par.DB.Model(report).Insert()
+    _, err := par.DB.Model(&report).Insert()
     return err
 } 
 
@@ -61,7 +61,7 @@ func (imr *InMemoryAccidentReportRepository) GetAllAccidentReport() []data.Accid
 }
 
 func (pas*PostgresAccidentSummaryRepository) AddAccidentSummary(report data.AccidentSummary) error {
-    _, err := pas.DB.Model(report).Insert()
+    _, err := pas.DB.Model(&report).Insert()
     return err
 }
 

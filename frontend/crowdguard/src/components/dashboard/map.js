@@ -142,7 +142,7 @@ const Map = ({ positions }) => {
       <div
         id='map'
         ref={mapContainerRef}
-        className='w-full h-[88vh] rounded-lg shadow-md'
+        className='w-full h-[85vh] rounded-lg shadow-md'
       ></div>
       {detailsboxOpen && (
         <DetailsBox

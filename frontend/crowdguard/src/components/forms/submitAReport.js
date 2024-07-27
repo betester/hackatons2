@@ -149,7 +149,7 @@ const SubmitReport = ({}) => {
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
-                      <div className='flex space-x-4 items-center'>
+                      <div className='flex space-x-4 items-center overflow-hidden whitespace-nowrap'>
                         <div className='flex space-x-2 items-center border p-2'>
                           <a
                             className='text-black hover:underline text-sm'
@@ -159,7 +159,9 @@ const SubmitReport = ({}) => {
                           </a>
                         </div>
                         {location ? (
-                          <p className='text-sm text-gray-500'>{location}</p>
+                          <p className='text-sm text-gray-500 text-ellipsis'>
+                            {location}
+                          </p>
                         ) : (
                           <Skeleton width={100} height={20} />
                         )}

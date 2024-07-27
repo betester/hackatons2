@@ -5,7 +5,7 @@ import { NavigationMenu, NavigationMenuList } from '../ui/navigation-menu';
 import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { useMediaQuery } from 'react-responsive';
+import MediaQuery, { useMediaQuery } from 'react-responsive';
 import { usePathname } from 'next/navigation';
 
 const Header = ({}) => {
@@ -29,7 +29,7 @@ const Header = ({}) => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
   return (
-    <div className='flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-sans pl-10 pr-10'>
+    <div className='flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-sans pl-8 pr-8'>
       {isMobile ? <MobileHeader {...props} /> : <DesktopHeader {...props} />}
     </div>
   );
@@ -42,7 +42,7 @@ const MobileHeader = ({
   currentPath,
 }) => {
   return (
-    <div className='flex justify-start items-center h-16 bg-white text-black relative shadow-sm font-sans sm:pl-0 sm:pr-0 lg:pl-10 lg:pr-10 sm:ml-10'>
+    <div className='flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-sans w-full'>
       <Sheet onOpenChange={(isOpen) => setMobileSheetOpen(isOpen)}>
         <SheetTrigger asChild>
           <Button variant='outline'>
@@ -65,6 +65,9 @@ const MobileHeader = ({
 
         <SheetContent>
           <div className='flex flex-col space-y-4 mt-10'>
+            <MediaQuery minWidth={0} maxWidth={385}>
+              <h1 className='text-md font-bold '>CrowdGuard</h1>
+            </MediaQuery>
             <Button
               variant='outline'
               onClick={() => goToLink('https://crowdguard.org/')}
@@ -77,8 +80,9 @@ const MobileHeader = ({
           </div>
         </SheetContent>
       </Sheet>
-      <h1 className='text-xl font-bold mr-5 ml-2'>CrowdGuard</h1>
-
+      <MediaQuery minWidth={385}>
+        <h1 className='text-md font-bold '>CrowdGuard</h1>
+      </MediaQuery>
       <Button
         variant='destructive'
         onClick={() => {
@@ -88,9 +92,9 @@ const MobileHeader = ({
             setDrawerOpen(true);
           }
         }}
-        className='ml-5'
+        // className='ml-5'
       >
-        <p className=' font-semibold'>Submit a report!</p>
+        Submit a report!
       </Button>
     </div>
   );

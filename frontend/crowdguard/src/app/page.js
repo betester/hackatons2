@@ -43,7 +43,7 @@ export default function Home() {
     const interval = setInterval(() => {
       fetchAccidentData();
       console.log('fetching data');
-    }, 3000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);

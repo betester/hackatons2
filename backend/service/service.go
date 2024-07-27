@@ -47,19 +47,15 @@ func (ars *AccidentReportServiceImpl) CreateAccidentSummary() []data.AccidentSum
 
     response := ars.AccidentReportRepository.GetAllAccidentReport()
 
-    fmt.Println(response)
-
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
-
-
 
     var tempBiggestTimeScan time.Time 
 
     // filter out response that the cluster already created 
     // could also use batching and run concurrently for better performance
     for i := range response {
-        if response[i].CreatedTimeStamp.Before(ars.BiggestTime) {
+        if response[i].CreatedTimeStamp.Before(ars.BiggestTime) || response[i].CreatedTimeStamp.Equal(ars.BiggestTime) {
             continue
         }
 
@@ -112,7 +108,10 @@ func (ars *AccidentReportServiceImpl) CreateAccidentSummary() []data.AccidentSum
         ars.AccidentSummaryRepository.AddAccidentSummary(result)
     }
 
-    ars.BiggestTime = tempBiggestTimeScan
+    if (tempBiggestTimeScan.After(ars.BiggestTime)) {
+        ars.BiggestTime = tempBiggestTimeScan
+    }
+    fmt.Println("biggest current", ars.BiggestTime, "temp biggest", tempBiggestTimeScan)
     return clusterSummary
 }
 

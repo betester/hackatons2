@@ -1,4 +1,4 @@
-export const eventTypes = [
+const eventTypes = [
   { key: 'EARTHQUAKE', value: 'Earthquake' },
   { key: 'HURRICANE', value: 'Hurricane' },
   { key: 'TORNADO', value: 'Tornado' },
@@ -40,3 +40,5 @@ export const eventTypes = [
   { key: 'MASS_SHOOTING', value: 'Mass Shooting' },
   { key: 'DROWNING', value: 'Drowning' },
 ];
+
+export { eventTypes };

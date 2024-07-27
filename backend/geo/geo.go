@@ -31,6 +31,18 @@ func getNeighbors(points [][2]float64, idx int, eps float64) []int {
 	return neighbors
 }
 
+func GetCoordinateMiddlePoint(locations [][2]float64) (float64, float64) {
+	var latitude float64
+	var longitude float64
+
+	// get the total sum for each points
+	for i := range locations {
+		latitude += locations[i][0]
+		longitude += locations[i][1]
+	}
+	return latitude/float64(len(locations)), longitude/float64(len(locations))
+}
+
 func Dbscan(points [][2]float64, eps float64) [][]int {
 	n := len(points)
 

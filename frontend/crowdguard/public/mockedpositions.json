@@ -1,0 +1,93 @@
+[
+    {
+      "description": "Minor collision between two cars",
+      "location": {
+        "longitude": 106.8456,
+        "latitude": -6.2088
+      },
+      "accident_type": "Collision",
+      "photo": null
+    },
+    {
+      "description": "Motorbike accident on a busy street",
+      "location": {
+        "longitude": 106.8570,
+        "latitude": -6.2110
+      },
+      "accident_type": "Motorbike",
+      "photo": null
+    },
+    {
+      "description": "Pedestrian hit by a car",
+      "location": {
+        "longitude": 106.8382,
+        "latitude": -6.1972
+      },
+      "accident_type": "Pedestrian",
+      "photo": null
+    },
+    {
+      "description": "Truck overturned on the highway",
+      "location": {
+        "longitude": 106.8272,
+        "latitude": -6.2222
+      },
+      "accident_type": "Truck",
+      "photo": null
+    },
+    {
+      "description": "Car broke down causing traffic",
+      "location": {
+        "longitude": 106.8498,
+        "latitude": -6.2018
+      },
+      "accident_type": "Breakdown",
+      "photo": null
+    },
+    {
+      "description": "Bicycle accident at the park",
+      "location": {
+        "longitude": 106.8375,
+        "latitude": -6.2105
+      },
+      "accident_type": "Bicycle",
+      "photo": null
+    },
+    {
+      "description": "Multi-vehicle pile-up on the main road",
+      "location": {
+        "longitude": 106.8539,
+        "latitude": -6.2194
+      },
+      "accident_type": "Multi-vehicle",
+      "photo": null
+    },
+    {
+      "description": "Scooter accident near the mall",
+      "location": {
+        "longitude": 106.8450,
+        "latitude": -6.2241
+      },
+      "accident_type": "Scooter",
+      "photo": null
+    },
+    {
+      "description": "Hit and run incident reported",
+      "location": {
+        "longitude": 106.8420,
+        "latitude": -6.2070
+      },
+      "accident_type": "Hit and Run",
+      "photo": null
+    },
+    {
+      "description": "Car accident due to wet road",
+      "location": {
+        "longitude": 106.8521,
+        "latitude": -6.2167
+      },
+      "accident_type": "Weather",
+      "photo": null
+    }
+  ]
+  

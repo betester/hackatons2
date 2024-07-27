@@ -4,6 +4,8 @@ import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { DetailsBox } from './detailsbox';
+import { useAtom } from 'jotai';
+import { drawerOpenStateAtom } from '@/atoms';
 
 const Map = ({
   // props
@@ -11,6 +13,7 @@ const Map = ({
 }) => {
   //   console.log(positions);
   const [markerClickedData, setMarkerClickedData] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
   const mapContainerRef = useRef();
   const mapRef = useRef();
 
@@ -76,7 +79,8 @@ const Map = ({
   return (
     <div className='mb-12'>
       <div id='map' ref={mapContainerRef} style={{ height: '80vh' }}></div>
-      {markerClickedData && (
+
+      {markerClickedData && !drawerOpen && (
         <DetailsBox
           description={markerClickedData?.description}
           location

@@ -88,11 +88,14 @@ func CreateAccidentSummary() []data.AccidentSummary  {
         if (result.Severity == -1)  {
             continue;
         }
+        
+        result.CreatedTimeStamp = time.Now()
 
         clusterSummary = append(clusterSummary, result)
+        summaryDatabase[currentSummaryDatabaseId] = result
+        currentSummaryDatabaseId += 1
     }
 
     biggestTimeScan = tempBiggestTimeScan
-
     return clusterSummary
 }

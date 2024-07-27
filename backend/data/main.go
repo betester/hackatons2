@@ -21,4 +21,5 @@ type AccidentSummary struct {
     AccidentType string `json:"type"`
     Location GeoLocation `json:"location"`
     Severity int `json:"severity"`
+    CreatedTimeStamp time.Time
 }

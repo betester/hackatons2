@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"hackatons2/backend/data"
 	"os"
-
 	"github.com/joho/godotenv"
 	"github.com/sashabaranov/go-openai"
 )

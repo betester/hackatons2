@@ -101,3 +101,11 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     biggestTimeScan = tempBiggestTimeScan
     return clusterSummary
 }
+
+// TODO: user aware location brother
+func GetAccidentSummary() []data.AccidentSummary {
+
+    results := make([]data.AccidentSummary, 0)
+
+    return results
+}

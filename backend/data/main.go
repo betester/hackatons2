@@ -46,6 +46,8 @@ var ACCIDENT_TYPE map[string]string = map[string]string{
     "OTHER":                "other",
 }
 
+var SEVERITY_LEVEL map[int]int = make(map[int]int)
+
 type GeoLocation struct {
     Longitude float64 `json:"longitude"`
     Latitude float64  `json:"latitude"`

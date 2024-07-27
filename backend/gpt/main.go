@@ -6,15 +6,12 @@ import (
 	"fmt"
 	"hackatons2/backend/data"
 	"os"
-	"github.com/joho/godotenv"
 	"github.com/sashabaranov/go-openai"
 )
 
 
 func SummarizeAccidentDescription(descriptions [][2]string) (data.AccidentSummary, error){
 
-
-    err := godotenv.Load()
     client := openai.NewClient(os.Getenv("OPEN_AI_API_KEY"))
 
     // this will make things slow but fuck it

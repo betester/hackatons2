@@ -3,7 +3,7 @@ import { atom } from "jotai";
 // drawer open state atom
 const drawerOpenStateAtom = atom(false);
 
-// submit useref atom
-const submitRefAtom = atom(null);
+// Mobile sheet open state atom
+const mobileSheetOpenStateAtom = atom(false);
 
-export { drawerOpenStateAtom };
+export { drawerOpenStateAtom, mobileSheetOpenStateAtom };

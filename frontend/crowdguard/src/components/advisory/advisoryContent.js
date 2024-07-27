@@ -66,18 +66,6 @@ export const advisoryCards = [
     link: 'blizzard',
   },
   {
-    title: 'Heatwave 🌞',
-    description:
-      'Stay hydrated, avoid strenuous activities, and stay indoors during the hottest parts of the day.',
-    link: 'heatwave',
-  },
-  {
-    title: 'Cold Wave ❄️',
-    description:
-      'Stay indoors, dress warmly, and check on vulnerable people and pets.',
-    link: 'cold-wave',
-  },
-  {
     title: 'Tropical Storm 🌴',
     description:
       "Stay indoors, secure loose objects, and stay informed about the storm's progress.",
@@ -120,10 +108,10 @@ export const advisoryCards = [
     link: 'solar-flare',
   },
   {
-    title: 'Car Accident 🚗',
+    title: 'Traffic Accident 🚗',
     description:
       'Stay calm, check for injuries, and call emergency services if necessary.',
-    link: 'car-accident',
+    link: 'traffic-accident',
   },
   {
     title: 'Plane Crash ✈️',
@@ -156,28 +144,10 @@ export const advisoryCards = [
     link: 'fire',
   },
   {
-    title: 'Explosion 💥',
-    description:
-      'Move away from the blast area, seek medical attention if needed, and follow emergency instructions.',
-    link: 'explosion',
-  },
-  {
     title: 'Chemical Spill ☣️',
     description:
       'Evacuate the area, avoid contact with the chemical, and follow instructions from authorities.',
     link: 'chemical-spill',
-  },
-  {
-    title: 'Radiation Leak ☢️',
-    description:
-      'Evacuate if instructed, avoid contaminated areas, and follow safety guidelines from authorities.',
-    link: 'radiation-leak',
-  },
-  {
-    title: 'Food Poisoning 🤢',
-    description:
-      'Seek medical attention if symptoms are severe, stay hydrated, and avoid consuming suspect food.',
-    link: 'food-poisoning',
   },
   {
     title: 'Industrial Accident 🏭',
@@ -192,12 +162,6 @@ export const advisoryCards = [
     link: 'construction-accident',
   },
   {
-    title: 'Medical Malpractice ⚕️',
-    description:
-      'Seek a second opinion, report the incident, and consult legal advice if necessary.',
-    link: 'medical-malpractice',
-  },
-  {
     title: 'Natural Gas Leak 🏠',
     description:
       'Evacuate the area, avoid using electrical devices, and call emergency services.',
@@ -208,12 +172,6 @@ export const advisoryCards = [
     description:
       'Use flashlights, avoid using candles, and keep refrigerators closed to preserve food.',
     link: 'power-outage',
-  },
-  {
-    title: 'Cyberattack 🖥️',
-    description:
-      'Disconnect from the internet, change passwords, and report the incident to authorities.',
-    link: 'cyberattack',
   },
   {
     title: 'Terrorist Attack 💣',
@@ -233,17 +191,12 @@ export const advisoryCards = [
       'Run, hide, or fight depending on the situation, and call emergency services as soon as possible.',
     link: 'mass-shooting',
   },
-  {
-    title: 'Drowning 🌊',
-    description:
-      'Call for help, try to rescue the person if safe to do so, and perform CPR if trained.',
-    link: 'drowning',
-  },
 ];
 
 export const whatToDo = [
   {
     key: 'earthquake',
+    title: 'Earthquake',
     howto: [
       {
         header: 'Drop, Cover, and Hold On',
@@ -266,10 +219,12 @@ export const whatToDo = [
         text: 'After the shaking stops, check yourself and others for injuries and provide first aid if necessary.',
       },
     ],
-    video: '2NWwpbrgz9Y'
+    video: '2NWwpbrgz9Y',
   },
   {
     key: 'hurricane',
+    title: 'Hurricane',
+    video: 'xHRbnuB9F1I',
     howto: [
       {
         header: 'Secure Your Home',
@@ -294,7 +249,220 @@ export const whatToDo = [
     ],
   },
   {
+    key: 'chemical-spill',
+    title: 'Chemical Spill',
+    video: 'IUZgLtuT4JQ',
+    howto: [
+      {
+        header: 'Evacuate the Area',
+        text: 'Move to a safe location upwind of the spill to avoid exposure to hazardous chemicals.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Listen to emergency alerts and follow instructions from local authorities.',
+      },
+      {
+        header: 'Avoid Contaminated Areas',
+        text: 'Stay away from areas that have been contaminated by the chemical spill.',
+      },
+      {
+        header: 'Seek Medical Attention',
+        text: 'If you are exposed to the chemical, seek medical attention immediately.',
+      },
+      {
+        header: 'Report the Spill',
+        text: 'Call emergency services to report the spill and provide information about the incident.',
+      },
+    ],
+  },
+  {
+    key: 'industrial-accident',
+    title: 'Industrial Accident',
+    howto: [
+      {
+        header: 'Evacuate the Area',
+        text: 'Move to a safe location away from the accident site to avoid further harm.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Listen to emergency alerts and follow instructions from local authorities.',
+      },
+      {
+        header: 'Seek Medical Attention',
+        text: 'If you are injured, seek medical attention immediately.',
+      },
+      {
+        header: 'Report the Accident',
+        text: 'Call emergency services to report the accident and provide information about the incident.',
+      },
+      {
+        header: 'Follow Safety Protocols',
+        text: 'Follow safety protocols and evacuation procedures to prevent further injuries.',
+      },
+    ],
+  },
+  {
+    key: 'construction-accident',
+
+    howto: [
+      {
+        header: 'Report the Accident',
+        text: 'Call emergency services to report the accident and provide information about the incident.',
+      },
+      {
+        header: 'Seek Medical Attention',
+        text: 'If you are injured, seek medical attention immediately.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Listen to emergency alerts and follow instructions from local authorities.',
+      },
+      {
+        header: 'Follow Safety Protocols',
+        text: 'Follow safety protocols and evacuation procedures to prevent further injuries.',
+      },
+      {
+        header: 'Assist Others',
+        text: 'Help others if you are able and it is safe to do so.',
+      },
+    ],
+  },
+  {
+    key: 'natural-gas-leak',
+    title: 'Natural Gas Leak',
+    howto: [
+      {
+        header: 'Evacuate the Area',
+        text: 'Move to a safe location away from the gas leak to avoid exposure to harmful gases.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Listen to emergency alerts and follow instructions from local authorities.',
+      },
+      {
+        header: 'Avoid Using Electronics',
+        text: 'Do not use electrical devices or light switches, as they can ignite gas fumes.',
+      },
+      {
+        header: 'Call Emergency Services',
+        text: 'Report the gas leak to emergency services and provide information about the incident.',
+      },
+      {
+        header: 'Do Not Use Open Flames',
+        text: 'Do not light matches, candles, or cigarettes near the gas leak.',
+      },
+    ],
+  },
+  {
+    key: 'power-outage',
+    title: 'Power Outage',
+    howto: [
+      {
+        header: 'Use Flashlights',
+        text: 'Use flashlights instead of candles to prevent fires during a power outage.',
+      },
+      {
+        header: 'Keep Refrigerators Closed',
+        text: 'Keep refrigerators and freezers closed to preserve food and prevent spoilage.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Monitor updates from your local utility company and follow their instructions.',
+      },
+      {
+        header: 'Avoid Using Generators Indoors',
+        text: 'Do not use generators indoors to prevent carbon monoxide poisoning.',
+      },
+      {
+        header: 'Check on Neighbors',
+        text: 'Check on elderly or vulnerable neighbors to ensure their safety during the outage.',
+      },
+    ],
+  },
+  {
+    key: 'terrorist-attack',
+    title: 'Terrorist Attack',
+
+    howto: [
+      {
+        header: 'Stay Calm and Alert',
+        text: 'Try to remain calm and be aware of your surroundings. Panic can make the situation worse.',
+      },
+      {
+        header: 'Follow Instructions from Authorities',
+        text: 'Listen to and follow instructions from law enforcement and emergency services personnel.',
+      },
+      {
+        header: 'Evacuate if Safe',
+        text: 'If you are in a building or crowded area, leave immediately if it is safe to do so. Avoid using elevators.',
+      },
+      {
+        header: 'Take Cover',
+        text: 'Find a safe place to hide. If indoors, lock and barricade doors, turn off lights, and silence your phone.',
+      },
+      {
+        header: 'Report Suspicious Activity',
+        text: 'If you see something suspicious, report it to authorities as soon as it is safe to do so.',
+      },
+    ],
+  },
+  {
+    key: 'riots',
+    title: 'Riots',
+    howto: [
+      {
+        header: 'Stay Indoors',
+        text: 'Avoid going outside and stay indoors to reduce the risk of getting caught in the unrest.',
+      },
+      {
+        header: 'Secure Your Home',
+        text: 'Lock all doors and windows, and close any blinds or curtains to avoid attracting attention.',
+      },
+      {
+        header: 'Stay Informed',
+        text: 'Follow news updates and listen to authorities for instructions on how to stay safe.',
+      },
+      {
+        header: 'Avoid Conflict Zones',
+        text: 'Do not go near areas where the riots are happening. Stay away from crowds and demonstrations.',
+      },
+      {
+        header: 'Have an Emergency Kit',
+        text: 'Prepare an emergency kit with essentials like food, water, and medical supplies in case you need to stay indoors for an extended period.',
+      },
+    ],
+  },
+
+  {
+    key: 'mass-shooting',
+    title: 'Mass Shooting',
+    howto: [
+      {
+        header: 'Run',
+        text: 'If there is an accessible escape path, attempt to evacuate the premises immediately.',
+      },
+      {
+        header: 'Hide',
+        text: 'If evacuation is not possible, find a place to hide where the shooter is less likely to find you. Lock and barricade the door if possible.',
+      },
+      {
+        header: 'Silence Your Phone',
+        text: 'Turn off any sources of noise, such as your cell phone or pager, to avoid attracting the shooter’s attention.',
+      },
+      {
+        header: 'Call Emergency Services',
+        text: 'When it is safe to do so, call emergency services and provide them with as much information as possible.',
+      },
+      {
+        header: 'Fight as a Last Resort',
+        text: 'If you cannot run or hide, and your life is in imminent danger, attempt to incapacitate the shooter using physical aggression and items at your disposal.',
+      },
+    ],
+  },
+  {
     key: 'tornado',
+    title: 'Tornado',
+    video: '_5TiTfuvotc',
     howto: [
       {
         header: 'Find Shelter',
@@ -320,6 +488,8 @@ export const whatToDo = [
   },
   {
     key: 'flood',
+    title: 'Flood',
+    video: 'rV1iqRD9EKY',
     howto: [
       {
         header: 'Move to Higher Ground',
@@ -345,6 +515,8 @@ export const whatToDo = [
   },
   {
     key: 'wildfire',
+    title: 'Wildfire',
+    video: 'FIsZP39OMUs',
     howto: [
       {
         header: 'Create a Defensible Space',
@@ -370,6 +542,8 @@ export const whatToDo = [
   },
   {
     key: 'tsunami',
+    title: 'Tsunami',
+    video: 'm7EDddq9ftQ',
     howto: [
       {
         header: 'Move to Higher Ground',
@@ -395,6 +569,8 @@ export const whatToDo = [
   },
   {
     key: 'volcanic-eruption',
+    title: 'Volcanic Eruption',
+    video: 'w_z9yobpE',
     howto: [
       {
         header: 'Evacuate If Advised',
@@ -420,6 +596,8 @@ export const whatToDo = [
   },
   {
     key: 'landslide',
+    title: 'Landslide',
+    video: '9j_StYqR_Pg',
     howto: [
       {
         header: 'Move Away from the Path',
@@ -445,6 +623,7 @@ export const whatToDo = [
   },
   {
     key: 'drought',
+    title: 'Drought',
     howto: [
       {
         header: 'Conserve Water',
@@ -470,6 +649,8 @@ export const whatToDo = [
   },
   {
     key: 'avalanche',
+    title: 'Avalanche',
+    video: 'RnCCqHOiX5Q',
     howto: [
       {
         header: 'Move to a Safe Area',
@@ -495,6 +676,7 @@ export const whatToDo = [
   },
   {
     key: 'blizzard',
+    title: 'Blizzard',
     howto: [
       {
         header: 'Stay Indoors',
@@ -520,6 +702,7 @@ export const whatToDo = [
   },
   {
     key: 'tropical-storm',
+    title: 'Tropical Storm',
     howto: [
       {
         header: 'Secure Loose Objects',
@@ -545,6 +728,7 @@ export const whatToDo = [
   },
   {
     key: 'storm-surge',
+    title: 'Storm Surge',
     howto: [
       {
         header: 'Evacuate If Ordered',
@@ -570,6 +754,7 @@ export const whatToDo = [
   },
   {
     key: 'hailstorm',
+    title: 'Hailstorm',
     howto: [
       {
         header: 'Stay Indoors',
@@ -595,6 +780,7 @@ export const whatToDo = [
   },
   {
     key: 'dust-storm',
+    title: 'Dust Storm',
     howto: [
       {
         header: 'Stay Indoors',
@@ -620,6 +806,7 @@ export const whatToDo = [
   },
   {
     key: 'fog',
+    title: 'Fog',
     howto: [
       {
         header: 'Drive Slowly',
@@ -645,6 +832,7 @@ export const whatToDo = [
   },
   {
     key: 'thunderstorm',
+    title: 'Thunderstorm',
     howto: [
       {
         header: 'Stay Indoors',
@@ -670,6 +858,7 @@ export const whatToDo = [
   },
   {
     key: 'solar-flare',
+    title: 'Solar Flare',
     howto: [
       {
         header: 'Stay Informed',
@@ -694,7 +883,9 @@ export const whatToDo = [
     ],
   },
   {
-    key: 'car-accident',
+    key: 'traffic-accident',
+    title: 'Traffic Accident',
+    video: 'uMAgxMFjz6A',
     howto: [
       {
         header: 'Stay Calm',
@@ -720,6 +911,7 @@ export const whatToDo = [
   },
   {
     key: 'plane-crash',
+    title: 'Plane Crash',
     howto: [
       {
         header: 'Follow Safety Instructions',
@@ -745,6 +937,7 @@ export const whatToDo = [
   },
   {
     key: 'train-derailment',
+    title: 'Train Derailment',
     howto: [
       {
         header: 'Stay Calm',
@@ -770,6 +963,7 @@ export const whatToDo = [
   },
   {
     key: 'shipwreck',
+    title: 'Shipwreck',
     howto: [
       {
         header: 'Follow Crew Instructions',
@@ -795,6 +989,7 @@ export const whatToDo = [
   },
   {
     key: 'building-collapse',
+    title: 'Building Collapse',
     howto: [
       {
         header: 'Take Cover',
@@ -820,6 +1015,8 @@ export const whatToDo = [
   },
   {
     key: 'fire',
+    title: 'Fire',
+    video: 'apwK7Y362qU',
     howto: [
       {
         header: 'Evacuate Immediately',
@@ -845,6 +1042,7 @@ export const whatToDo = [
   },
   {
     key: 'nuclear-disaster',
+    title: 'Nuclear Disaster',
     howto: [
       {
         header: 'Seek Shelter',

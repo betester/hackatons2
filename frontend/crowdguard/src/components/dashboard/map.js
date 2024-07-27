@@ -5,17 +5,21 @@ import { useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { DetailsBox } from './detailsbox';
 import { useAtom } from 'jotai';
-import { drawerOpenStateAtom } from '@/atoms';
+import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
 
-const Map = ({
-  // props
-  positions,
-}) => {
-  //   console.log(positions);
+const Map = ({ positions }) => {
   const [markerClickedData, setMarkerClickedData] = useState(null);
+  const [detailsboxOpen, setDetailsboxOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
+  const [mobileSheetOpen, setMobileSheetOpen] = useAtom(
+    mobileSheetOpenStateAtom
+  );
   const mapContainerRef = useRef();
   const mapRef = useRef();
+
+  useEffect(() => {
+    setDetailsboxOpen(false);
+  }, [drawerOpen, mobileSheetOpen]);
 
   useEffect(() => {
     mapboxgl.accessToken =
@@ -62,8 +66,45 @@ const Map = ({
 
   //   render markers on the map
   useEffect(() => {
-    // console.log(positions, "called!");
     if (!positions || !mapRef.current) return;
+
+    const addCircleRadius = (coordinates) => {
+      try {
+        const sourceId = `marker - ${coordinates[0]} - ${coordinates[1]}`;
+
+        // draw a circle of 1km radius from the accident location
+        mapRef.current.addSource(sourceId, {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates,
+            },
+          },
+        });
+
+        const severityColor = {
+          1: 'yellow',
+          2: 'orange',
+          3: 'red',
+        };
+
+        mapRef.current.addLayer({
+          id: sourceId,
+          type: 'circle',
+          source: sourceId,
+          paint: {
+            'circle-radius': 15,
+            'circle-color':
+              severityColor[Math.floor(Math.random() * (3 - 1 + 1)) + 1],
+            'circle-opacity': 0.5,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     positions.forEach((el) => {
       const marker = new mapboxgl.Marker()
@@ -72,16 +113,21 @@ const Map = ({
 
       marker.getElement().addEventListener('click', () => {
         setMarkerClickedData(el);
+        setDetailsboxOpen(true);
       });
+
+      addCircleRadius([el.location.longitude, el.location.latitude]);
     });
   }, [positions]);
 
   return (
     <div className='mb-12'>
-      <div id='map' ref={mapContainerRef} 
-      className='w-full h-[88vh] rounded-lg shadow-md'
+      <div
+        id='map'
+        ref={mapContainerRef}
+        className='w-full h-[88vh] rounded-lg shadow-md'
       ></div>
-      {markerClickedData && !drawerOpen && (
+      {detailsboxOpen && (
         <DetailsBox
           description={markerClickedData?.description}
           location

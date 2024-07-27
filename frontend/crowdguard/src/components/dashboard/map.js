@@ -10,6 +10,7 @@ import {
   drawerOpenStateAtom,
   mobileSheetOpenStateAtom,
 } from '@/atoms';
+import { severityDetails } from '../forms/eventTypes';
 
 const Map = ({ positions }) => {
   const [markerClickedData, setMarkerClickedData] = useState(null);
@@ -98,12 +99,6 @@ const Map = ({ positions }) => {
           },
         });
 
-        const severityColor = {
-          1: 'yellow',
-          2: 'orange',
-          3: 'red',
-        };
-
         mapRef.current.addLayer({
           id: sourceId,
           type: 'circle',
@@ -111,10 +106,13 @@ const Map = ({ positions }) => {
           paint: {
             'circle-radius': 15,
             'circle-color':
-              severityColor[
-                positions.find((el) => el.location.longitude === coordinates[0])
-                  ?.severity
-              ],
+              severityDetails[
+                positions.find(
+                  (el) =>
+                    el.location.longitude === coordinates[0] &&
+                    el.location.latitude === coordinates[1]
+                ).severity
+              ].color,
             'circle-opacity': 0.5,
           },
         });
@@ -147,7 +145,7 @@ const Map = ({ positions }) => {
       {detailsboxOpen && (
         <DetailsBox
           description={markerClickedData?.description}
-          location
+          location={markerClickedData?.location}
           accident_advice={markerClickedData?.accident_advice}
           accident_type={markerClickedData?.type}
           severity={markerClickedData?.severity}

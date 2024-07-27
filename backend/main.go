@@ -30,7 +30,7 @@ func main() {
 
 	r := gin.Default()
 
-	summaryDuration := time.NewTicker(1000 * time.Second)
+	summaryDuration := time.NewTicker(300 * time.Second)
 
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))

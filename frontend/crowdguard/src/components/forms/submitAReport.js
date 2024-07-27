@@ -1,12 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '../ui/drawer';
 import { useAtom } from 'jotai';
 import { drawerOpenStateAtom } from '@/atoms';
 import {
   Form,
   FormField,
-  Label,
   FormItem,
   FormLabel,
   FormControl,
@@ -27,7 +26,6 @@ import {
 } from '../ui/select';
 import { eventTypes } from './eventtypes';
 import { toast } from 'sonner';
-import { LoadingSpinner } from '../ui/spinnerloading';
 import { Skeleton } from '../ui/skeleton';
 
 const accidentReportSchema = z.object({
@@ -52,6 +50,11 @@ const SubmitReport = ({}) => {
   });
 
   const onSubmit = async (data) => {
+    if (!data.description || !data.location || !data.accidentType) {
+      toast.error('Please fill all fields');
+      return;
+    }
+
     const coords = {
       latitude: parseFloat(data.location.split(',')[1].trim()),
       longitude: parseFloat(data.location.split(',')[0].trim()),
@@ -68,7 +71,6 @@ const SubmitReport = ({}) => {
           location: coords,
           accident_type: data.accidentType,
           description: data.description,
-          photo: data.photo,
         }),
       });
 
@@ -79,7 +81,7 @@ const SubmitReport = ({}) => {
       toast.success('Report submitted successfully');
     } catch (error) {
       console.error(error);
-      // alert('An error occurred while submitting the report');
+      toast.error('An error occurred while submitting the report');
     }
   };
 
@@ -98,12 +100,11 @@ const SubmitReport = ({}) => {
   }, []);
 
   return (
-    <Drawer
-      tite='Submit a report'
-      open={drawerOpen}
-      onOpenChange={(open) => setDrawerOpen(open)}
-    >
+    <Drawer open={drawerOpen} onOpenChange={(open) => setDrawerOpen(open)}>
       <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Submit a report</DrawerTitle>
+        </DrawerHeader>
         <div className='p-4'>
           <Form {...form}>
             <form
@@ -113,14 +114,11 @@ const SubmitReport = ({}) => {
               <FormField
                 control={form.control}
                 name='description'
-                render={({ field }) => (
+                render={({}) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='Bicycle accident at the park'
-                        {...field}
-                      />
+                      <Input placeholder='There was an accident at the corner of Jl. Radio Dalam and Jl. Gandaria' />
                     </FormControl>
                     <FormDescription>
                       Describe the accident in a few words.
@@ -133,7 +131,7 @@ const SubmitReport = ({}) => {
               <FormField
                 control={form.control}
                 name='location'
-                render={({ field }) => (
+                render={({}) => (
                   <FormItem>
                     <FormLabel>Location</FormLabel>
                     <FormControl>
@@ -147,10 +145,7 @@ const SubmitReport = ({}) => {
                           </a>
                         </div>
                         {location ? (
-                          <p className='text-sm text-gray-500'>
-                            {/* {form.watch('location')} */}
-                            {location}
-                          </p>
+                          <p className='text-sm text-gray-500'>{location}</p>
                         ) : (
                           <Skeleton width={100} height={20} />
                         )}
@@ -167,7 +162,7 @@ const SubmitReport = ({}) => {
               <FormField
                 control={form.control}
                 name='location'
-                render={({ field }) => (
+                render={({}) => (
                   <FormItem>
                     <FormLabel>Type</FormLabel>
                     <FormControl>

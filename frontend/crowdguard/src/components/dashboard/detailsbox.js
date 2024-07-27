@@ -1,6 +1,5 @@
 import { useMediaQuery } from 'react-responsive';
-
-const { Card, CardDescription, CardTitle } = require('../ui/card');
+import { Card, CardDescription, CardTitle } from '../ui/card';
 
 const DetailsBox = ({ description, location, accident_type }) => {
   const getGmapsLink = (location) => {
@@ -12,30 +11,34 @@ const DetailsBox = ({ description, location, accident_type }) => {
 
   const desktopAbsolutePosition = {
     position: 'absolute',
-    bottom: 150,
-    left: 120,
+    bottom: 10,
+    right: 120,
     zIndex: 1000,
   };
 
   const mobileAbsolutePosition = {
     position: 'absolute',
-    bottom: 150,
-    left: 60,
+    bottom: 50,
+    left: 65,
     zIndex: 1000,
   };
 
   return (
     <div
-      className='w-[300px] h-[150px] transition-all'
+      className={
+        isMobile
+          ? 'w-[300px] h-[200px] transition-all'
+          : 'w-[400px] h-[250px] transition-all'
+      }
       style={isMobile ? mobileAbsolutePosition : desktopAbsolutePosition}
     >
       <Card className='p-4'>
         <CardTitle className='text-lg font-bold'>{accident_type}</CardTitle>
         <CardDescription className='text-sm'>
-          <div className='flex flex-col space-y-2'>
+          <div className='flex flex-col'>
             <p>{description}</p>
             <a
-              className='text-blue-500 hover:underline'
+              className='text-blue-500 hover:underline mb-2'
               href={getGmapsLink(location)}
               target='_blank'
             >
@@ -43,11 +46,9 @@ const DetailsBox = ({ description, location, accident_type }) => {
             </a>
 
             <p className='text-sm text-muted-foreground'>
+              {/* Use dynamic from DB TODO: */}
               What to do? Call 911 or the emergency number in your country.{' '}
               <br />
-              <a className='text-blue-500 hover:underline'>
-                Click here for more information
-              </a>
             </p>
           </div>
         </CardDescription>

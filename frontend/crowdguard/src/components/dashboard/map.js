@@ -1,8 +1,8 @@
 'use strict';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { DetailsBox } from './detailsbox';
 import { useAtom } from 'jotai';
 import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
@@ -28,7 +28,7 @@ const Map = ({ positions }) => {
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [106.865, -6.2088],
+      center: [106.865, -6.2088], // Jakarta coords
       zoom: 8,
     });
 
@@ -39,7 +39,7 @@ const Map = ({ positions }) => {
             position.coords.longitude,
             position.coords.latitude,
           ];
-          map.flyTo({ center: userLocation, zoom: 14 });
+          map.flyTo({ center: userLocation, zoom: 10 });
         });
       }
     };
@@ -55,6 +55,9 @@ const Map = ({ positions }) => {
       })
     );
 
+    // Add zoom control
+    mapRef.current.addControl(new mapboxgl.NavigationControl());
+
     mapRef.current.on('load', () => {
       locateUser(mapRef.current);
     });
@@ -64,7 +67,7 @@ const Map = ({ positions }) => {
     };
   }, []);
 
-  //   render markers on the map
+  // render markers on the map
   useEffect(() => {
     if (!positions || !mapRef.current) return;
 
@@ -72,7 +75,6 @@ const Map = ({ positions }) => {
       try {
         const sourceId = `marker - ${coordinates[0]} - ${coordinates[1]}`;
 
-        // draw a circle of 1km radius from the accident location
         mapRef.current.addSource(sourceId, {
           type: 'geojson',
           data: {

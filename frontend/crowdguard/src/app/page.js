@@ -1,6 +1,6 @@
 'use client';
 import Map from '@/components/dashboard/map';
-import { SubmitReport } from '@/components/forms/formdrawer';
+import { SubmitReport } from '@/components/forms/submitAReport';
 import { useEffect, useState } from 'react';
 
 export default function Home() {

@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+CrowdGuard is a community driven centralized platform for real-time incident reporting and tracking. It Connects citizens, volunteers, and authorities, in one app to ease the process of facilitating help or neutralizing a situation. 
+
 ## Getting Started
 
 First, run the development server:
@@ -34,3 +36,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# Tech used
+- Shadcn
+- Mapbox

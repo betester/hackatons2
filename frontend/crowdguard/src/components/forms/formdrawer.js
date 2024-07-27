@@ -25,7 +25,8 @@ import {
   SelectValue,
   SelectItem,
 } from '../ui/select';
-import { eventTypes } from './eventTypes';
+import { eventTypes } from './eventtypes';
+
 
 const accidentReportSchema = z.object({
   description: z.string(),

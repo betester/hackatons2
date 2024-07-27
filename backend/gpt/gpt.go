@@ -12,11 +12,10 @@ import (
 )
 
 
-func SummarizeAccidentDescription(ctx context.Context, descriptions [][2]string) (data.AccidentSummary, error){
+func SummarizeAccidentDescription(ctx *context.Context, descriptions [][2]string) (data.AccidentSummary, error){
 
-    client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
+    client, err := genai.NewClient(*ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
 
-    // this will make things slow but fuck it
     var enumKeys []string
 
     for key := range data.ACCIDENT_TYPE {
@@ -30,7 +29,7 @@ func SummarizeAccidentDescription(ctx context.Context, descriptions [][2]string)
     prompt := fmt.Sprintf(`
         BASED ON THE FOLLOWING INPUT
 
-        Input: where each element contains description and type of an accident. Start reading the input from 'Input:' and return based on the format given. If you feel like the list of description is not accident then set the severity into -1. You should only return the following types: %s
+        Input: Each element contains description and type of an accident. Start reading the input from 'Input:' and return based on the format given. If you feel like the description and type of accident does not match then set the severity into -1. The description field is a one liner summary that you make of the accident given, it should be simple and informative so that user can see what is happening. You should only return the following types: %s
 
         INPUT IS
 
@@ -41,17 +40,18 @@ func SummarizeAccidentDescription(ctx context.Context, descriptions [][2]string)
         {
         "severity" : int,
         "type" : string,
-        "accident_advice" : string
+        "accident_advice" : string,
+        "description" : string
         }
 
 
-        ONLY RETURN YOUR ANSWER IN JSON WITH THE FORMAT
+        ONLY RETURN YOUR ANSWER IN JSON WITH THE FORMAT. YOUR ANSWER SHOULD BE ONLY ONE JSON, IT SHOULD BE THE SUMMARIZED AND ANALYZED DATA BASED ON THE INFORMATION GIVEN
         `, string(benum), string(bdescriptions))
 
     model := client.GenerativeModel("gemini-1.5-flash-latest")
 
     resp, err := model.GenerateContent(
-        ctx,
+        *ctx,
         genai.Text(prompt),
     )
 
@@ -73,6 +73,8 @@ func SummarizeAccidentDescription(ctx context.Context, descriptions [][2]string)
     } else {
         fmt.Println("No content in the response")
     }
+
+    fmt.Println(strResp)
 
     marshalErr := json.Unmarshal([]byte(strResp), &summary)
 

@@ -1,8 +1,11 @@
 package service
 
 import (
+	"context"
+	"fmt"
 	"hackatons2/backend/data"
 	"hackatons2/backend/geo"
+	"hackatons2/backend/gpt"
 	"time"
 )
 
@@ -39,7 +42,7 @@ func GetAccidentReport() []data.AccidentReport {
     return response
 }
 
-func CreateAccidentSummary() []data.AccidentSummary  {
+func CreateAccidentSummary(ctx *context.Context) []data.AccidentSummary  {
     response := GetAccidentReport()
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
@@ -71,42 +74,36 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     clusterSummary := make([]data.AccidentSummary, 0)
 
     for i := range clusteredLocs {
-        descriptions := make([][2]string, len(clusteredLocs[i]))
-        locations := make([][2]float64, len(clusteredLocs[i]))
+        descriptions := make([][2]string, 0)
+        localLocations := make([][2]float64, 0)
         clusterIds := clusteredLocs[i]
 
         for j := range clusterIds {
-            descriptions[j][0] =  filteredResponse[clusterIds[j]] .Description
-            descriptions[j][1] =  filteredResponse[clusterIds[j]] .AccidentType
+            descriptions = append(descriptions, [2]string{filteredResponse[clusterIds[j]].Description, filteredResponse[clusterIds[j]].AccidentType})
+            localLocations = append(localLocations, [2]float64{filteredResponse[clusterIds[j]].Location.Latitude, filteredResponse[clusterIds[j]].Location.Longitude})
 
-            locations[j][0] = filteredResponse[clusterIds[j]].Location.Latitude
-            locations[j][1] = filteredResponse[clusterIds[j]].Location.Longitude
         }
 
-        // result, err := gpt.SummarizeAccidentDescription(descriptions)
-        //
-        // if err != nil {
-        //     fmt.Println(err)
-        // }
-        //
-        // if (result.Severity == -1)  {
-        //     continue;
-        // }
-        // 
+        result, err := gpt.SummarizeAccidentDescription(ctx, descriptions)
 
-        latitude, longitude := geo.GetCoordinateMiddlePoint(locations)
-
-        result := data.AccidentSummary{
-            AccidentType: "TEST",
-            Location : data.GeoLocation{
-                Latitude: latitude,
-                Longitude: longitude,
-            },
-            Severity: 1,
-            CreatedTimeStamp: currentTime,
+        if err != nil {
+            fmt.Println(err)
         }
 
-        result.CreatedTimeStamp = time.Now()
+        if (result.Severity == -1)  {
+            continue;
+        }
+
+
+        latitude, longitude := geo.GetCoordinateMiddlePoint(localLocations)
+
+        fmt.Println("latitude", "longitude")
+        fmt.Println(latitude,longitude)
+
+        result.Id = currentSummaryDatabaseId
+        result.Location.Latitude = latitude
+        result.Location.Longitude = longitude
+        result.CreatedTimeStamp = currentTime
 
         clusterSummary = append(clusterSummary, result)
         summaryDatabase[currentSummaryDatabaseId] = result
@@ -118,7 +115,7 @@ func CreateAccidentSummary() []data.AccidentSummary  {
 }
 
 func getSeverityTime(severity int) int {
-    if severity > 3 {
+    if severity >= 3 {
         return 90
     } else if severity == 2 {
         return 60
@@ -133,7 +130,7 @@ func GetAccidentSummary() []data.AccidentSummary {
     currentTime := time.Now()
 
     for i := range summaryDatabase {
-        time := summaryDatabase[i].CreatedTimeStamp.Add(time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
+        time := summaryDatabase[i].CreatedTimeStamp.Add(time.Minute * time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
         if currentTime.After(time) {
             continue
         }

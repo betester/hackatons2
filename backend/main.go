@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"hackatons2/backend/data"
 	"hackatons2/backend/service"
@@ -22,12 +23,13 @@ func init() {
 func main() {
     r := gin.Default()
     summaryDuration := time.NewTicker(10 * time.Second)
+    ctx := context.Background()
 
     go func() {
         for {
             select {
             case <-summaryDuration.C: 
-                service.CreateAccidentSummary()
+                service.CreateAccidentSummary(&ctx)
         }
         }
     }()
@@ -61,7 +63,7 @@ func main() {
         c.JSON(http.StatusOK, response)
     })
 
-    r.GET(fmt.Sprint("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
+    r.GET(fmt.Sprintf("%s/", service.SUMMARY_BASE_PATH), func(ctx *gin.Context) {
         summary := service.GetAccidentSummary()
         response := make(map[string][]data.AccidentSummary)
         response["data"] = summary

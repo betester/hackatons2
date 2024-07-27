@@ -23,7 +23,7 @@ func TestSummarizeAccidentDescription(t *testing.T) {
 	{"THE FIRE HAS GONE TO THREE HOUSES SO FAR, IT NEEDS TO BE STOPPED", "FIRE"},
     }
     ctx := context.Background()
-    result, err := gpt.SummarizeAccidentDescription(ctx, descriptions)
+    result, err := gpt.SummarizeAccidentDescription(&ctx, descriptions)
 
     if err != nil {
         t.Error(err)

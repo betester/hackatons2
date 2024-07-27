@@ -3,7 +3,7 @@ package data
 import "time"
 
 var ACCIDENT_TYPE map[string]string = map[string]string{
-    "CAR_ACCIDENT":         "Car Accident",
+    "TRAFFIC_ACCIDENT":         "Traffic accident",
     "PLANE_CRASH":          "Plane Crash",
     "TRAIN_DERAILMENT":     "Train Derailment",
     "SHIPWRECK":            "Shipwreck",
@@ -65,7 +65,7 @@ type AccidentReport struct {
 type AccidentSummary struct {
     Id int
     AccidentType string `json:"type"`
-    Location GeoLocation 
+    Location GeoLocation  `json:"location"`
     Severity int `json:"severity"`
     AccidentAdvice string `json:"accident_advice"`
     CreatedTimeStamp time.Time

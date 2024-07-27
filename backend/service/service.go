@@ -6,15 +6,12 @@ import (
 	"hackatons2/backend/data"
 	"hackatons2/backend/geo"
 	"hackatons2/backend/gpt"
+	"hackatons2/backend/repository"
 	"time"
 
 	"github.com/google/generative-ai-go/genai"
 )
 
-
-var currentAccidentReportId int = 0
-var currentSummaryDatabaseId int = 0
-var biggestTimeScan time.Time
 
 const (
     REPORT_BASE_PATH string = "accident_report" 
@@ -22,30 +19,32 @@ const (
     MAX_RADIUS float64 = 1000
 )
 
-func AddAccidentReport(reportDatabase *map[int]data.AccidentReport, report data.AccidentReport) {
-
-    report.Id = currentAccidentReportId
-    report.CreatedTimeStamp = time.Now()
-    (*reportDatabase)[report.Id] = report
-    currentAccidentReportId += 1
+type AccidentReportService interface {
+    AddAccidentReport(report data.AccidentReport) error
+    GetAccidentReport()
+    CreateAccidentSummary()
+    GetAccidentSummary()
 }
 
-
-func GetAccidentReport(reportDatabase *map[int]data.AccidentReport) []data.AccidentReport {
-
-    response := make([]data.AccidentReport, 0)
-
-    for _, value := range *reportDatabase {
-        response = append(response, value)
-    }
-
-    return response
+type AccidentReportServiceImpl struct {
+    AccidentReportRepository repository.AccidentReportRepository 
+    AccidentSummaryRepository repository.AccidentReportSummaryRepository
+    Client *genai.Client
+    Context context.Context
+    BiggestTime time.Time
 }
 
-func CreateAccidentSummary(client *genai.Client, reportDatabase *map[int]data.AccidentReport,
-                           summaryDatabase *map[int]data.AccidentSummary,
-                            ctx *context.Context) []data.AccidentSummary  {
-    response := GetAccidentReport(reportDatabase)
+func (ars *AccidentReportServiceImpl) AddAccidentReport(report data.AccidentReport) error {
+    return ars.AccidentReportRepository.AddAccidentReport(report)
+}
+
+func (ars *AccidentReportServiceImpl) GetAccidentReport() []data.AccidentReport {
+    return ars.AccidentReportRepository.GetAllAccidentReport()
+}
+
+func (ars *AccidentReportServiceImpl) CreateAccidentSummary() []data.AccidentSummary  {
+
+    response := ars.GetAccidentReport()
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
 
@@ -54,11 +53,11 @@ func CreateAccidentSummary(client *genai.Client, reportDatabase *map[int]data.Ac
     // filter out response that the cluster already created 
     // could also use batching and run concurrently for better performance
     for i := range response {
-        if response[i].CreatedTimeStamp.Before(biggestTimeScan) {
+        if response[i].CreatedTimeStamp.Before(ars.BiggestTime) {
             continue
         }
 
-        if (response[i].CreatedTimeStamp.After(biggestTimeScan)) {
+        if (response[i].CreatedTimeStamp.After(ars.BiggestTime)) {
             tempBiggestTimeScan = response[i].CreatedTimeStamp
         }
 
@@ -86,7 +85,7 @@ func CreateAccidentSummary(client *genai.Client, reportDatabase *map[int]data.Ac
 
         }
 
-        result, err := gpt.SummarizeAccidentDescription(client, ctx, descriptions)
+        result, err := gpt.SummarizeAccidentDescription(ars.Client, &ars.Context, descriptions)
 
         if err != nil {
             fmt.Println(err)
@@ -99,20 +98,15 @@ func CreateAccidentSummary(client *genai.Client, reportDatabase *map[int]data.Ac
 
         latitude, longitude := geo.GetCoordinateMiddlePoint(localLocations)
 
-        fmt.Println("latitude", "longitude")
-        fmt.Println(latitude,longitude)
-
-        result.Id = currentSummaryDatabaseId
         result.Location.Latitude = latitude
         result.Location.Longitude = longitude
         result.CreatedTimeStamp = currentTime
 
         clusterSummary = append(clusterSummary, result)
-        (*summaryDatabase)[currentSummaryDatabaseId] = result
-        currentSummaryDatabaseId += 1
+        ars.AccidentSummaryRepository.AddAccidentSummary(result)
     }
 
-    biggestTimeScan = tempBiggestTimeScan
+    ars.BiggestTime = tempBiggestTimeScan
     return clusterSummary
 }
 
@@ -126,19 +120,6 @@ func getSeverityTime(severity int) int {
     return 30
 }
 
-func GetAccidentSummary(summaryDatabase *map[int]data.AccidentSummary) []data.AccidentSummary {
-
-    results := make([]data.AccidentSummary, 0)
-    currentTime := time.Now()
-
-    for i := range *summaryDatabase {
-        time := (*summaryDatabase)[i].CreatedTimeStamp.Add(time.Minute * time.Duration(getSeverityTime((*summaryDatabase)[i].Severity)))
-        if currentTime.After(time) {
-            continue
-        }
-
-        results = append(results, (*summaryDatabase)[i])
-    }  
-
-    return results
+func (ars *AccidentReportServiceImpl) GetAccidentSummary() []data.AccidentSummary {
+    return ars.AccidentSummaryRepository.GetAllAccidentSummary()
 }

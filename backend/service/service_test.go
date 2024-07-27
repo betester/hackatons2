@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"hackatons2/backend/data"
+	"hackatons2/backend/repository"
 	"hackatons2/backend/service"
 	"os"
 	"testing"
@@ -24,10 +25,21 @@ func TestCreateAccidentSummary(t *testing.T) {
         t.Error(errEnv)
     }
 
-    reportDatabase := make(map[int]data.AccidentReport)
-    summaryDatabase := make(map[int]data.AccidentSummary)
+    reportDatabase := make([]data.AccidentReport, 0)
+    summaryDatabase := make([]data.AccidentSummary, 0)
+
+    reportRepository := repository.InMemoryAccidentReportRepository{Data : reportDatabase}
+    summaryRepository := repository.InMemoryAccidentSummaryRepository{Data : summaryDatabase}
+
 
     client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY"))) 
+
+    accidentReportService := service.AccidentReportServiceImpl{
+        AccidentReportRepository: &reportRepository,
+        AccidentSummaryRepository: &summaryRepository,
+        Client : client,
+        Context: ctx,
+    }
 
     if err != nil {
         t.Error(err)
@@ -69,11 +81,11 @@ func TestCreateAccidentSummary(t *testing.T) {
     }
 
     for i := range mockData {
-        service.AddAccidentReport(&reportDatabase, mockData[i])
+        accidentReportService.AddAccidentReport(mockData[i])
     }
 
-    result := service.CreateAccidentSummary(client, &reportDatabase, &summaryDatabase, &ctx)
-    savedResult := service.GetAccidentSummary(&summaryDatabase)
+    result := accidentReportService.CreateAccidentSummary()
+    savedResult := accidentReportService.GetAccidentSummary()
 
     if len(savedResult) != len(result) {
         fmt.Println("Saved result not the same from returned")

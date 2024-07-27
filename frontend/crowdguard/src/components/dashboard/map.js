@@ -5,7 +5,12 @@ import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
 import { DetailsBox } from './detailsbox';
 import { useAtom } from 'jotai';
-import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
+import {
+  coordinatesClickedAtom,
+  drawerOpenStateAtom,
+  mobileSheetOpenStateAtom,
+} from '@/atoms';
+import { severityDetails } from '../forms/eventTypes';
 
 const Map = ({ positions }) => {
   const [markerClickedData, setMarkerClickedData] = useState(null);
@@ -13,6 +18,9 @@ const Map = ({ positions }) => {
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
   const [mobileSheetOpen, setMobileSheetOpen] = useAtom(
     mobileSheetOpenStateAtom
+  );
+  const [coordinatesClicked, setCoordinatesClicked] = useAtom(
+    coordinatesClickedAtom
   );
   const mapContainerRef = useRef();
   const mapRef = useRef();
@@ -62,6 +70,11 @@ const Map = ({ positions }) => {
       locateUser(mapRef.current);
     });
 
+    // set clicked coordinates to atom
+    mapRef.current.on('click', (e) => {
+      setCoordinatesClicked(`${e.lngLat.lng},${e.lngLat.lat}`);
+    });
+
     return () => {
       mapRef.current.remove();
     };
@@ -86,12 +99,6 @@ const Map = ({ positions }) => {
           },
         });
 
-        const severityColor = {
-          1: 'yellow',
-          2: 'orange',
-          3: 'red',
-        };
-
         mapRef.current.addLayer({
           id: sourceId,
           type: 'circle',
@@ -99,7 +106,19 @@ const Map = ({ positions }) => {
           paint: {
             'circle-radius': 15,
             'circle-color':
-              severityColor[Math.floor(Math.random() * (3 - 1 + 1)) + 1],
+              severityDetails[
+                positions.find(
+                  (el) =>
+                    el.location.longitude === coordinates[0] &&
+                    el.location.latitude === coordinates[1]
+                ).severity > 3
+                  ? 3
+                  : positions.find(
+                      (el) =>
+                        el.location.longitude === coordinates[0] &&
+                        el.location.latitude === coordinates[1]
+                    ).severity
+              ].color,
             'circle-opacity': 0.5,
           },
         });
@@ -108,7 +127,7 @@ const Map = ({ positions }) => {
       }
     };
 
-    positions.forEach((el) => {
+    positions?.forEach((el) => {
       const marker = new mapboxgl.Marker()
         ?.setLngLat([el.location.longitude, el.location.latitude])
         ?.addTo(mapRef.current);
@@ -127,14 +146,17 @@ const Map = ({ positions }) => {
       <div
         id='map'
         ref={mapContainerRef}
-        className='w-full h-[88vh] rounded-lg shadow-md'
+        className='w-full h-[85vh] rounded-lg shadow-md'
       ></div>
       {detailsboxOpen && (
         <DetailsBox
           description={markerClickedData?.description}
-          location
-          accident_type={markerClickedData?.accident_type}
+          location={markerClickedData?.location}
+          accident_advice={markerClickedData?.accident_advice}
+          accident_type={markerClickedData?.type}
+          severity={markerClickedData?.severity}
           photo={markerClickedData?.photo}
+          setDetailsboxOpen={setDetailsboxOpen}
         />
       )}
     </div>

@@ -49,6 +49,7 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     var tempBiggestTimeScan time.Time 
 
     // filter out response that the cluster already created 
+    // could also use batching and run concurrently for better performance
     for i := range response {
         if response[i].CreatedTimeStamp.Before(biggestTimeScan) {
             continue

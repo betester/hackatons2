@@ -54,7 +54,7 @@ type GeoLocation struct {
 }
 
 type AccidentReport struct {
-    Id int `json:"id"`
+    Id int
     Description string `json:"description"`
     Location GeoLocation `json:"location"`
     AccidentType string `json:"accident_type"`

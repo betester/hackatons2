@@ -24,7 +24,7 @@ import {
   SelectValue,
   SelectItem,
 } from '../ui/select';
-import { eventTypes } from './eventtypes';
+import { eventTypes } from './eventTypes';
 import { toast } from 'sonner';
 import { Skeleton } from '../ui/skeleton';
 
@@ -50,7 +50,6 @@ const SubmitReport = ({}) => {
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
     if (!data.description || !data.location || !data.accidentType) {
       toast.error('Please fill all fields');
       return;

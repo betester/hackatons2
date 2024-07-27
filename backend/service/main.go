@@ -29,19 +29,17 @@ func AddAccidentReport(report data.AccidentReport) {
     reportDatabase[report.Id] = report;
 }
 
+
 func GetAccidentReport() []data.AccidentReport {
 
     response := make([]data.AccidentReport, len(reportDatabase))
-    locations := make([][2]float64, len(response))
 
-    for i := range response {
-        locations[i][0] = response[i].Location.Latitude
-        locations[i][1] = response[i].Location.Longitude
+    for _, value := range reportDatabase {
+        response = append(response, value)
     }
-    
+
     return response
 }
-
 func CreateAccidentSummary() []data.AccidentSummary  {
     response := GetAccidentReport()
     filteredResponse := make([]data.AccidentReport, 0)
@@ -102,10 +100,29 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     return clusterSummary
 }
 
-// TODO: user aware location brother
+func getSeverityTime(severity int) int {
+    if severity > 3 {
+        return 90
+    } else if severity == 2 {
+        return 60
+    } 
+
+    return 30
+}
+
 func GetAccidentSummary() []data.AccidentSummary {
 
     results := make([]data.AccidentSummary, 0)
+    currentTime := time.Now()
+
+    for i := range summaryDatabase {
+        time := summaryDatabase[i].CreatedTimeStamp.Add(time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
+        if currentTime.After(time) {
+            continue
+        }
+
+        results = append(results, summaryDatabase[i])
+    }  
 
     return results
 }

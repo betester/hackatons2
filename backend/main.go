@@ -14,23 +14,14 @@ import (
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 )
-
-func init() {
-	errEnv := godotenv.Load()
-
-	if errEnv != nil {
-		fmt.Println(errEnv)
-	}
-}
 
 func main() {
 
 	r := gin.Default()
 
-	summaryDuration := time.NewTicker(300 * time.Second)
+	summaryDuration := time.NewTicker(30 * time.Second)
 
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
@@ -138,6 +129,7 @@ func createSchema(db *pg.DB) error {
 	for _, model := range models {
 		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
 			IfNotExists: true,
+			Temp: false,
 		})
 		if err != nil {
 			return err

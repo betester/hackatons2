@@ -72,11 +72,12 @@ func CreateAccidentSummary() []data.AccidentSummary  {
     clusterSummary := make([]data.AccidentSummary, 0)
 
     for i := range clusteredLocs {
-        descriptions := make([]string, len(clusteredLocs[i]))
+        descriptions := make([][2]string, len(clusteredLocs[i]))
         clusterIds := clusteredLocs[i]
 
         for j := range clusterIds {
-            descriptions[j] =  filteredResponse[clusterIds[j]] .Description
+            descriptions[j][0] =  filteredResponse[clusterIds[j]] .Description
+            descriptions[j][1] =  filteredResponse[clusterIds[j]] .AccidentType
         }
 
         result, err := gpt.SummarizeAccidentDescription(descriptions)

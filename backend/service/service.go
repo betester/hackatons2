@@ -7,6 +7,8 @@ import (
 	"hackatons2/backend/geo"
 	"hackatons2/backend/gpt"
 	"time"
+
+	"github.com/google/generative-ai-go/genai"
 )
 
 
@@ -40,7 +42,9 @@ func GetAccidentReport(reportDatabase *map[int]data.AccidentReport) []data.Accid
     return response
 }
 
-func CreateAccidentSummary(reportDatabase *map[int]data.AccidentReport, summaryDatabase *map[int]data.AccidentSummary, ctx *context.Context) []data.AccidentSummary  {
+func CreateAccidentSummary(client *genai.Client, reportDatabase *map[int]data.AccidentReport,
+                           summaryDatabase *map[int]data.AccidentSummary,
+                            ctx *context.Context) []data.AccidentSummary  {
     response := GetAccidentReport(reportDatabase)
     filteredResponse := make([]data.AccidentReport, 0)
     currentTime := time.Now()
@@ -82,7 +86,7 @@ func CreateAccidentSummary(reportDatabase *map[int]data.AccidentReport, summaryD
 
         }
 
-        result, err := gpt.SummarizeAccidentDescription(ctx, descriptions)
+        result, err := gpt.SummarizeAccidentDescription(client, ctx, descriptions)
 
         if err != nil {
             fmt.Println(err)

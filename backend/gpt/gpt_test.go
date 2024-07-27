@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"hackatons2/backend/gpt"
+	"os"
 	"testing"
 
+	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
+	"google.golang.org/api/option"
 )
 
 func TestSummarizeAccidentDescription(t *testing.T) {
@@ -23,7 +26,13 @@ func TestSummarizeAccidentDescription(t *testing.T) {
 	{"THE FIRE HAS GONE TO THREE HOUSES SO FAR, IT NEEDS TO BE STOPPED", "FIRE"},
     }
     ctx := context.Background()
-    result, err := gpt.SummarizeAccidentDescription(&ctx, descriptions)
+    client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
+
+    if err != nil {
+	t.Error(err)
+    }
+
+    result, err := gpt.SummarizeAccidentDescription(client, &ctx, descriptions)
 
     if err != nil {
         t.Error(err)

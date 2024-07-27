@@ -5,16 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"hackatons2/backend/data"
-	"os"
 
 	"github.com/google/generative-ai-go/genai"
-	"google.golang.org/api/option"
 )
 
 
-func SummarizeAccidentDescription(ctx *context.Context, descriptions [][2]string) (data.AccidentSummary, error){
-
-    client, err := genai.NewClient(*ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
+func SummarizeAccidentDescription(client *genai.Client, ctx *context.Context, descriptions [][2]string) (data.AccidentSummary, error){
 
     var enumKeys []string
 

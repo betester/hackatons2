@@ -6,10 +6,13 @@ import (
 	"hackatons2/backend/data"
 	"hackatons2/backend/service"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
+	"google.golang.org/api/option"
 )
 
 func init() {
@@ -21,9 +24,17 @@ func init() {
 }
 
 func main() {
+
     r := gin.Default()
+
     summaryDuration := time.NewTicker(10 * time.Second)
+
     ctx := context.Background()
+    client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY")))
+
+    if err != nil {
+        panic(err)
+    }
     
     reportDatabase := make(map[int]data.AccidentReport) 
     summaryDatabase := make(map[int]data.AccidentSummary) 
@@ -32,8 +43,8 @@ func main() {
         for {
             select {
             case <-summaryDuration.C: 
-                service.CreateAccidentSummary(&reportDatabase, &summaryDatabase, &ctx)
-        }
+                service.CreateAccidentSummary(client, &reportDatabase, &summaryDatabase, &ctx)
+            }
         }
     }()
 

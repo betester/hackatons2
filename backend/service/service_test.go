@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"hackatons2/backend/data"
 	"hackatons2/backend/service"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/google/generative-ai-go/genai"
 	"github.com/joho/godotenv"
+	"google.golang.org/api/option"
 )
 
 func TestCreateAccidentSummary(t *testing.T) {
@@ -18,11 +21,17 @@ func TestCreateAccidentSummary(t *testing.T) {
     errEnv := godotenv.Load("../.env")
     
     if errEnv != nil {
-        fmt.Println(errEnv)
+        t.Error(errEnv)
     }
 
     reportDatabase := make(map[int]data.AccidentReport)
     summaryDatabase := make(map[int]data.AccidentSummary)
+
+    client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("OPEN_AI_API_KEY"))) 
+
+    if err != nil {
+        t.Error(err)
+    }
 
     mockData := []data.AccidentReport{
         {
@@ -63,7 +72,7 @@ func TestCreateAccidentSummary(t *testing.T) {
         service.AddAccidentReport(&reportDatabase, mockData[i])
     }
 
-    result := service.CreateAccidentSummary(&reportDatabase, &summaryDatabase, &ctx)
+    result := service.CreateAccidentSummary(client, &reportDatabase, &summaryDatabase, &ctx)
     savedResult := service.GetAccidentSummary(&summaryDatabase)
 
     if len(savedResult) != len(result) {

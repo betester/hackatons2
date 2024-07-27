@@ -1,19 +1,21 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"hackatons2/backend/data"
-	"hackatons2/backend/repository"
-	"hackatons2/backend/service"
-	"net/http"
-	"os"
-	"time"
+    "context"
+    "fmt"
+    "hackatons2/backend/data"
+    "hackatons2/backend/repository"
+    "hackatons2/backend/service"
+    "net/http"
+    "os"
+    "time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/generative-ai-go/genai"
-	"github.com/joho/godotenv"
-	"google.golang.org/api/option"
+    "github.com/gin-gonic/gin"
+    "github.com/go-pg/pg/v10"
+    "github.com/go-pg/pg/v10/orm"
+    "github.com/google/generative-ai-go/genai"
+    "github.com/joho/godotenv"
+    "google.golang.org/api/option"
 )
 
 func init() {
@@ -36,12 +38,22 @@ func main() {
     if err != nil {
         panic(err)
     }
+    
+    url := os.Getenv("URL")
+    parsedUrl, err := pg.ParseURL(url)
 
-    reportDatabase := make([]data.AccidentReport, 0)
-    summaryDatabase := make([]data.AccidentSummary, 0)
+    if err != nil {
+        panic(err)
+    }
 
-    reportRepository := repository.InMemoryAccidentReportRepository{Data : reportDatabase}
-    summaryRepository := repository.InMemoryAccidentSummaryRepository{Data : summaryDatabase}
+    db := pg.Connect(parsedUrl)
+
+    defer db.Close()
+
+    createSchema(db)
+
+    reportRepository := repository.PostgresAccidentReportRepository{DB: db}
+    summaryRepository := repository.PostgresAccidentSummaryRepository{DB : db}
 
     accidentReportService := service.AccidentReportServiceImpl{
         AccidentReportRepository: &reportRepository,
@@ -49,8 +61,6 @@ func main() {
         Client : client,
         Context: ctx,
     }
-
-
 
     go func() {
         for {
@@ -114,4 +124,20 @@ func CORSMiddleware() gin.HandlerFunc {
 
         c.Next()
     }
+}
+
+func createSchema(db *pg.DB) error {
+    models := []interface{}{
+        (*data.AccidentSummary)(nil),
+        (*data.AccidentReport)(nil),
+    }
+    for _, model := range models {
+        err := db.Model(model).CreateTable(&orm.CreateTableOptions{
+            Temp: true,
+        })
+        if err != nil {
+            return err
+        }
+    }
+    return nil
 }

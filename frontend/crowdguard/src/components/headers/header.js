@@ -5,7 +5,8 @@ import { NavigationMenu, NavigationMenuList } from '../ui/navigation-menu';
 import { drawerOpenStateAtom, mobileSheetOpenStateAtom } from '@/atoms';
 import Link from 'next/link';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import MediaQuery from 'react-responsive';
+import { useMediaQuery } from 'react-responsive';
+import { usePathname } from 'next/navigation';
 
 const Header = ({}) => {
   const [drawerOpen, setDrawerOpen] = useAtom(drawerOpenStateAtom);
@@ -16,7 +17,7 @@ const Header = ({}) => {
   const goToLink = (link) => {
     window.location.href;
   };
-  const currentPath = window.location.pathname;
+  const currentPath = usePathname();
 
   const props = {
     goToLink,
@@ -26,15 +27,10 @@ const Header = ({}) => {
     mobileSheetOpen,
   };
 
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
   return (
     <div className='flex justify-between items-center h-16 bg-white text-black relative shadow-sm font-sans pl-10 pr-10'>
-      <MediaQuery maxWidth={768}>
-        <MobileHeader {...props} />
-      </MediaQuery>
-
-      <MediaQuery minWidth={769}>
-        <DesktopHeader {...props} />
-      </MediaQuery>
+      {isMobile ? <MobileHeader {...props} /> : <DesktopHeader {...props} />}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"hackatons2/backend/data"
 	"hackatons2/backend/geo"
 	"time"
@@ -140,7 +141,6 @@ func GetAccidentSummary() []data.AccidentSummary {
 
     for i := range summaryDatabase {
         time := summaryDatabase[i].CreatedTimeStamp.Add(time.Duration(getSeverityTime(summaryDatabase[i].Severity)))
-
         if currentTime.After(time) {
             continue
         }
